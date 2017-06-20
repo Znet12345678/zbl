@@ -1,0 +1,88 @@
+###############################################################
+# bochsrc file for pragmalinux disk image.
+#
+# This file is provided both as .bochsrc and bochsrc so
+# that it works on win32 and unix.
+###############################################################
+
+#gdbstub: enabled=1, port=1234, text_base=0, data_base=0, bss_base=0
+
+# how much memory the emulated machine will have
+megs: 256
+
+# filename of ROM images
+romimage: file=$BXSHARE/BIOS-bochs-latest, address=0xe0000
+vgaromimage: file=$BXSHARE/VGABIOS-lgpl-latest
+
+# Use the parallel port as an alternate console,
+# so that we can run Bochs without the GUI.
+parport1: enabled=1, file="/dev/stdout"
+#parport1: enabled=1, file="/dev/null"
+com1: enabled=1, mode=null
+
+# uncommenting one of the following lines can be used to specify your
+# preferred display. (defaults to x11 for bochs-bin and to term for
+# bochs-term)
+
+#display_library: x
+
+# nogui can still be useful because you can see the output on the
+# parport1 from above
+#display_library: nogui
+
+# if using "term", you probably want to change the parport output to
+# go to a file or /dev/null
+#display_library: term
+
+# disk images
+floppya: 1_44=bootloader.bin,status=inserted
+boot:floppy
+
+# choose the boot disk.
+boot: a
+
+# where do we send log messages?
+log: bochs.log
+#log: /dev/stdout
+
+# disable the mouse
+mouse: enabled=0
+
+#debug: action=ignore
+info: action=ignore
+error: action=report
+panic: action=ask
+
+# this changes how often the screen is refreshed.  Lowering it will
+# make your screen update more often, which will slow down emulation,
+# but will make the display respond faster.  It can also be useful if
+# you machine is panicing and the most recent screen changes are not
+# displayed before it panics.
+
+
+
+# changing ips can lead to dramatically different performance.  It
+# also affects how quickly time passes in the emulated machine.
+# Setting it too low can cause clock interrupts to happen too rapidly.
+# Setting it too high will make the whole machine feel sluggish.
+# (Note: with using clock sync=realtime, the ips parameter is not
+# really used, although it is still used for vga updates)
+
+# This means that time in the emulated machine is the same as
+# realtime.  This can be scary because running the same simulation
+# twice in a row can lead to different results (because they started
+# at different times, for instance).  If you want to use non-real
+# time, then use sync=none.
+clock: sync=realtime, time0=local
+# clock: sync=none, time0=946681200 # jan 1, 2000
+
+
+
+# the line below will allow you true network access, but you must be root
+#ne2k: ioaddr=0x300, irq=9, mac=b0:c4:20:00:00:01, ethmod=linux, ethdev=eth0
+
+#ne2k: enabled=1, mac=b0:c4:20:00:00:01, ethmod=null, ethdev=eth0, ioaddr=0x300, irq=9
+#pnic: enabled=1, mac=b0:c4:20:00:00:02, ethmod=null, ethdev=eth0
+
+#i440fxsupport: enabled=1, slot1=ne2k, slot2=pcipnic
+

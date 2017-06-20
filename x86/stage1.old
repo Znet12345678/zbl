@@ -1,0 +1,23 @@
+[ORG 0x7c00]
+[BITS 16]
+start:mov ah,0x0e
+mov al,'.'
+int 0x10
+mov ah,0x02
+mov al,1
+mov ch,0
+mov cl,2
+mov dh,0
+mov dl,0x80
+mov bx,0x8000
+int 13h
+cmp ah,0
+jnz err
+jmp 0x8000
+err:mov ah,0x0e
+mov al,'E'
+int 0x10
+jmp hng
+hng:jmp hng
+times 510 - ($ - $$) db 0
+dw 0xaa55

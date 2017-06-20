@@ -1,0 +1,139 @@
+#include <stdint.h>
+#include "lib.h"
+__asm__(".code32");
+__asm__("jmp main");
+
+enum vga_colour{
+        COLOUR_BLACK = 0,
+        COLOUR_BLUE = 1,
+        COLOUR_GREEN = 2,
+        COLOUR_CYAN = 3,
+        COLOUR_RED = 4,
+        COLOUR_MAGENTA = 5,
+        COLOUR_BROWN = 6,
+        COLOUR_LIGHT_GREY = 7,
+        COLOUR_DARK_GREY = 8,
+        COLOUR_LIGHT_BLUE = 9,
+        COLOUR_LIGHT_GREEN = 10,
+        COLOUR_LIGHT_CYAN = 11,
+        COLOUR_LIGHT_RED = 12,
+        COLOUR_LIGHT_MAGENTA = 13,
+        COLOUR_LIGHT_BROWN = 14,
+        COLOUR_WHITE = 15,
+};
+static inline uint8_t mkcolour(enum vga_colour fg,enum vga_colour bg){
+        return fg | bg << 4;
+}
+static inline uint16_t mkent(char c,uint8_t colour){
+        uint16_t c16 = c;
+        uint16_t colour16 = colour;
+        return c16 | colour16 << 8;
+}
+
+uint16_t *vga = (uint16_t*)0xB8000;
+uint16_t *tbuff;
+int tcolour;
+int x = 0,y = 0;
+void t_init(){
+	x = 0;
+	y = 0;
+	tcolour = 7;
+	tbuff = vga;
+	 for(int y = 0; y < 25;y++){
+        	for(int x = 0;x < 80;x++){
+        	    const unsigned long index = y * 80 + x;
+        	    tbuff[index] = mkent(' ',tcolour);
+	        }
+    }
+
+}
+
+void t_putc(char c){
+	if(x == 80 || c == '\n'){
+		x = 0;
+		if(y == 25){
+			y = 0;
+			t_init();
+		}else
+			y++;
+	}
+	if(c != '\n')
+		vga[y * 80 + x] = mkent(c,7);
+	if(x != 80 && c != '\n')
+		x++;
+	outb(0x3d4,0x0f);
+	outb(0x3d5,(y * 80 + x) & 0xff);
+	outb(0x3d4,0x0e);
+	outb(0x3d5,(y * 80 + x) & 0xff);
+}
+int strlen(const char *str){
+	int i = 0;
+	while(str[i] != 0)
+		i++;
+	return i;
+}
+void print(const char *str){
+	for(int i = 0; i < strlen(str);i++)
+		t_putc(str[i]);
+}
+void panic(){
+	print("panic()");
+	while(1)
+		;
+}
+void strcpy(char *dest,const char *src){
+	int i = strlen(dest);
+	int j = 0;
+	while(i < strlen(dest) + strlen(src)){
+		dest[i] = src[j];
+		i++;
+		j++;
+	}
+}
+int main(){
+	t_init();
+	uint16_t *buf = (uint16_t*)0x00100000;
+	print("Determaning disk!\n");
+	int *pntr = (int*) 0x0000500;
+	uint16_t io;
+	if(*pntr == 0){
+		print("Floppy not supported!\n");
+		panic();
+
+	}else if(*pntr == 0x80){
+		io = 0x1f0;
+		print("Using primary hd\n");
+	}else if(*pntr = 0x81){
+		io = 0x170;
+		print("Using secondary hd\n");
+	}
+	print("Reading disk...\n");
+	if(read_elf_on_disk(buf,34,io) < 0)
+		panic();
+	print("Finding ELF in memory\n");
+	pntr = (int*)0x00100000;
+	int i = 0;
+	while(1){
+		if(*pntr == 0x7f)
+			break;
+		*pntr++;
+		i++;
+	}
+	print("Parsing and loading ELF\n");
+	*pntr--;
+	*pntr--;
+	*pntr--;
+	load_elf_from_memory(pntr);
+	print("Done!\n");
+	while(1)
+		;
+	while(1){
+		print("zbl>");
+		char *buf = (char*)0x00000500;
+		gets(buf);
+		print("\n");
+		print(buf);
+		erase(buf,1024);
+		print("\n");
+	}
+}
