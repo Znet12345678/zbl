@@ -378,7 +378,8 @@ int __exec(const char *path){
 	read_file(path,buf);
 	int size = elf_get_size(buf);
 	kprintf("Allocating %d bytes and Executing...\n",size);
-	uint8_t *mem = (uint8_t*)0x100000;
+	//uint8_t *mem = (uint8_t*)0x100000;
+	uint8_t *mem = (uint8_t*)0x00800000;
 	int (*main)(void) = exec_elf(mem,buf);
 	kprintf("Jumping\n");
 	t_writevals();

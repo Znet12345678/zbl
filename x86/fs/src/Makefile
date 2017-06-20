@@ -9,4 +9,4 @@ all:
 	${CC} -c init.c -o init.o ${CFLAGS}
 	${CC} -c boot.S -o boot.o ${CFLAGS}
 	${CC} ls.o -o ../exec/ls.elf ${LDFLAGS}
-	${LD} -T../../linker.ld boot.o  init.o -o ../init.elf -L../.. -lk -nostdlib
+	${LD} -Tlinker.ld boot.o  init.o -o ../init.elf -L../.. -lk -nostdlib

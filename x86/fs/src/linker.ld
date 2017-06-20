@@ -1,6 +1,6 @@
 ENTRY(_start)
 SECTIONS{
-	. = 1M;
+	. = 0x00800000;
 	.TEXT BLOCK(4K):ALIGN(4K){
 		*(.text)
 	}		
