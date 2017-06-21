@@ -1,7 +1,11 @@
 #include <lib.h>
 int main(int argc,char *argv[]){
-	if(argc != 2)
-		return -1;
+	t_readvals();
+	kprintf("LS:");
+	if(argc != 2){
+		kprintf("Invalid number of args %d\n",argc);
+		return 0;
+	}
 	list(argv[1]);
-	return 0;
+	return 1;
 }

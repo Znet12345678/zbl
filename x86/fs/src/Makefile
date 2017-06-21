@@ -8,5 +8,7 @@ all:
 	${CC} -c ls.c -o ls.o ${CFLAGS}
 	${CC} -c init.c -o init.o ${CFLAGS}
 	${CC} -c boot.S -o boot.o ${CFLAGS}
-	${CC} ls.o -o ../exec/ls.elf ${LDFLAGS}
+	${CC} -c help.c -o help.o ${CFLAGS}
+	${LD} -Tlinker.2.ld boot.o help.o -o ../exec/help.elf -L../.. -lk -nostdlib
+	${LD} -Tlinker.2.ld boot.o ls.o -o ../exec/ls.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.ld boot.o  init.o -o ../init.elf -L../.. -lk -nostdlib

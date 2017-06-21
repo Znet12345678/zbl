@@ -47,7 +47,7 @@ int exec_elf_args(void *dest,void *src,int argc,char **argv){
 		if(!start)
 			start = phdr[i].p_vaddr;
 		if(phdr[i].type == 1)
-			memmove(dest + phdr[i].p_vaddr - start,src + phdr[i].p_offset,phdr[i].p_filesz);
+			memmove((dest + phdr[i].p_vaddr - start),(src + phdr[i].p_offset),phdr[i].p_filesz);
 	}
 	t_writevals();
 	int (*main)(int argc,char *argv[]) = (int*)(dest + hdr->entry - start);

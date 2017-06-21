@@ -264,7 +264,7 @@ uint32_t fsize(const char *name){
 	struct __ent *ent = get_fdat(name);
 	if(!ent){
 		kprintf("Couldn't open %s\n",name);
-		panic();
+		return 0;
 	}
 	struct __fdat *fdat = __parse_fdat(ent->data_ent_lba,ent->data_ent_offset);
 	//kprintf("%d %d %d\n",fdat->alloc,fdat->ent_type,fdat->tlba);
@@ -452,7 +452,7 @@ DIR *opendir(const char *path){
 	while(i < last - 1){
 		while(strcmp(ent->name,name[i]) != 0){
 			if(ent->alloc != 1){
-				kprintf("No such file or directory! (%s)\n",name[i]);
+				kprintf("\nNo such file or directory! (%s)\n",name[i]);
 				return 0;
 			}
 			//kprintf("%d %d\n",ent->nxt_ent_lba,ent->nxt_ent_offset);
