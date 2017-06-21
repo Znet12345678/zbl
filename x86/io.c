@@ -39,7 +39,8 @@ enum INPUT_KEYS{
 	PRD = 0x34,
 	US = 0x0C,
 	SPACE = 0x39,
-	NL = 0x1C
+	NL = 0x1C,
+	BS = 0x35
 };
 void erase(void *buf,int n){
 	char *pntr = (char*)buf;
@@ -169,6 +170,8 @@ char kgetc(){
 			return '0';
 		else if(sc == US)
 			return '-';
+		else if(sc == BS)
+			return '/';
 		else{
 			return '\001';
 		return '\001';	
