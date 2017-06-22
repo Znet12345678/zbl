@@ -10,15 +10,15 @@ int *exec_elf(void *dest,void *src){
 	if(hdr->e_ident[0] != 0x7f || hdr->e_ident[1] != 'E' || hdr->e_ident[2] != 'L' || hdr->e_ident[3] != 'F'){
 		print("Invalid sig\n");
 		kprintf("{[%d],[%c],[%c],[%c]}\n",hdr->e_ident[0],hdr->e_ident[1],hdr->e_ident[2],hdr->e_ident[3]);
-		while(1);
+		return -1;
 	}
 	if(hdr->e_ident[4] != 1){
 		print("Invalid elf class\n");
-		while(1);
+		return -1;
 	}
 	if(hdr->e_ident[5] != 1){
 		print("Not little endian\n");
-		while(1);
+		return -1;
 	}
 	struct elf32_Phdr *phdr = (struct elf32_Phdr *)(src + hdr->phdr_pos);
 	for(int i = 0; i < hdr->num_ent_phdr;i++){

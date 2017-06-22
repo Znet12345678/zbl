@@ -21,6 +21,8 @@ int shell(char *cmd){
 	int (*main)(int argc,char **argv) = (int*)jmp;
 	kprintf("\n");
 	t_writevals();
+	free(buf);
+	free(path);
 	return main(argc,arr);
 //	return exec_elf_args(pntr,buf,argc,arr);
 }
@@ -30,9 +32,11 @@ int main(){
 	list("/");
 	kprintf("Control given to init!\n");
 	kprintf("TODO\n");
+	char *cmd = malloc(1024);
 	while(1){
+		for(int i = 0; i < 1024;i++)
+			cmd[i] = 0;
 		kprintf("KSH$");
-		char *cmd = malloc(1024);
 		gets(cmd);
 		if(!shell(cmd)){
 			kprintf("Failed to run command %s",cmd);

@@ -61,8 +61,10 @@ void t_putc(char c){
 		}else
 			y++;
 	}
-	if(c != '\n')
+	if(c != '\n' && c != '\t')
 		vga[y * 80 + x] = mkent(c,tcolour);
+	else if(c == '\t')
+		vga[y * 80 + x] = mkent(' ',tcolour);
 	if(x != 80 && c != '\n' && c != 0)
 		x++;
 	outb(0x3d4,0x0f);
