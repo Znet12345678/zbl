@@ -7,6 +7,7 @@ int main(int argc,char *argv[]){
 			return 0;
 		char *buf = malloc(size);
 		read_file(argv[1],buf);
-		kprintf("%s\n",buf);
+		for(int i = 0; i < size;i++)
+			t_putc(buf[i]);
 	}
 }
