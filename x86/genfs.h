@@ -4,6 +4,15 @@
 #define TYPE_DIR 0
 #define TYPE_FILE 1
 #define TYPE_DEV 2
+#define O_RDONLY 0x15
+#define O_RDWRITE 0x20
+struct fd{
+	uint8_t alloc;
+	uint8_t name[80];
+	uint32_t pos_lba;
+	uint16_t pos_offset;
+	uint8_t flags;
+};
 struct __superblock{
 	uint8_t sig[4];
 	uint32_t root_dir_offset;
@@ -66,9 +75,15 @@ struct __fdat{
 	uint8_t ent_type;
 	uint32_t tlba;
 };
+struct __finfo{
+	unsigned int pos_lba;
+	unsigned int pos_offset;
+	unsigned char flags;
+};
 typedef struct KFILE{
 	struct __ent *fent;
-	uint8_t pos;
+	struct __fdat *fdat;
+	struct __finfo *finfo;
 }KFILE;
 #ifndef LINUX
 DIR *opendir(const char *str);
@@ -88,6 +103,10 @@ int mkdir(const char *path);
 struct __data_ent *__parse_dent(int lba,int offset);
 int list(const char *path);
 int write_file(char *fpath,uint8_t *dat, int n);
+int open(const char *str,int flags,int mode);
+int read(int fd,void *buf,int count);
+int write(int fd,void *buf,int count);
+int close(int fd);
 #endif
 #ifdef LINUX
 int write_dirs(const char *path,FILE *f);

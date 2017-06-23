@@ -74,15 +74,15 @@ void t_putc(char c){
 
 }
 void t_writevals(){
-	uint8_t *pntr = (uint8_t*)0x00007E00;
+	uint8_t *pntr = (uint8_t*)0x00000510;
 	*pntr = x;
 	*pntr++;
 	*pntr = y;
 }
 #ifndef QEMU_BUILD
 void t_readvals(){
-	x = *(uint8_t*)0x00007E00;
-	y = *(uint8_t*)0x00007E01;
+	x = *(uint8_t*)0x00000510;
+	y = *(uint8_t*)0x00000511;
 	tcolour = mkcolour(COLOUR_LIGHT_GREY,COLOUR_BLUE);
 }
 #else

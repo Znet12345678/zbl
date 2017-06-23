@@ -71,7 +71,7 @@ void scroll(){
 	x = 0;
 }
 void t_writevals(){
-	uint8_t *pntr = (uint8_t*)0x00007E00;
+	uint8_t *pntr = (uint8_t*)0x00000510;
 	*pntr = (uint8_t)x;
 	*pntr++;
 	*pntr = (uint8_t)y;

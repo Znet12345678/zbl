@@ -1,7 +1,9 @@
+
 #include "lib.h"
 #include "mem.h"
 #include "zfs.h"
 #define ERR -1
+#ifdef __BUILD_ZFS
 const uint8_t sig[5] = {0x7F,'z','f','s',0};
 struct dirent *parse_dent(int lba,int offset){
 	struct dirent *ret = malloc(1024);
@@ -457,6 +459,7 @@ struct free_blk *find_free_ent(int root_lba,int root_offset,int size){
 int write_ent(struct ent *ent,int lba, int offset){
 
 }
+#endif
 
 char **sep(const char *str,int c){
 	int i = 0,k = 0,l = 0;
@@ -476,6 +479,7 @@ char **sep(const char *str,int c){
 	ret[l] = (char*)0;
 	return ret;
 }
+#ifdef __BUILD_ZFS
 struct free_blk *_find_free(int size){
 	struct superblock *sblk = parse_superblk(*(int*)0x501);
 	struct dirent *dent = parse_dent(sblk->root_dirent_lba,sblk->root_dirent_offset);
@@ -720,3 +724,4 @@ __DIR *__opendir(const char *dirname){
 		}
 	}
 }
+#endif

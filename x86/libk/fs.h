@@ -1,3 +1,4 @@
+#ifdef __BUILD_FS
 #ifndef __LIBK_FS_H
 #define __LIBK_FS_H
 #ifndef __LIBK_FS_SIG
@@ -83,5 +84,6 @@ int write_file_ent(const char *name,__libk_ent *ent);
 int write_ent(const char *name,__libk_dir_ent *prev,__libk_ent *went);
 int write_dir_ent(const char *name,__libk_dir_ent *prev,__libk_dir_ent *went);
 int mount(struct fs_info *fs);
+#endif
 #endif
 #endif

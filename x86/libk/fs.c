@@ -2,6 +2,7 @@
 *Expiremental File System driver for my operating system
 *(c) 2017 Zachary James Schlotman
 */
+#ifdef __BUILD_FS
 #include <mem.h>
 #include "str.h"
 #include "fs.h"
@@ -396,3 +397,4 @@ __libk_dir_ent *get_last_dirent(__libk_dir_ent *ent){
 	}
 	return ent;
 }
+#endif

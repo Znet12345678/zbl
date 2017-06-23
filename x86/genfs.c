@@ -306,6 +306,122 @@ int read_file(const char *name,uint8_t *pntr){
 	}
 	return 1;*/
 }
+struct fd *alloc_fd(){
+	struct fd *f = (struct fd *)0x00007E00;
+	int ret = 0;
+	while(f->alloc == 1){
+		f+=sizeof(*f);
+		ret++;
+	}
+	f->alloc = 1;
+	return ret;
+}
+int open(const char *fname,int flags,int mode){
+	int ret = alloc_fd();
+	struct fd *f = (struct fd *)(0x00007E00 + ret * sizeof(struct fd));
+	//kprintf("%s\n",fname);
+	memcpy(f->name,fname,80);
+	f->pos_lba = 0;
+	f->pos_offset = 0;
+	f->flags = flags;
+	return ret;
+	/*int *buf = (int*)0x00007E00;
+	memcpy(buf,fname,80);
+	int *pos = malloc(1024);
+	uint32_t pos_lba = 0;
+	uint16_t pos_offset = 0;
+	memcpy(buf + strlen(fname),&pos_lba,sizeof(uint32_t));
+	memcpy(buf + strlen(fname) + sizeof(uint32_t),&pos_offset,sizeof(uint16_t));
+	memcpy(buf + strlen(fname) + sizeof(uint32_t) + sizeof(uint16_t),&flags,sizeof(uint8_t));
+	return *buf;
+	struct KFILE *kf = malloc(1024);
+	if(flags | O_RDONLY == flags ){
+
+		kf->fent = get_fdat(fname);
+		kf->fdat = __parse_fdat(kf->fent->data_ent_lba,kf->fent->data_ent_offset);
+		kf->finfo = malloc(sizeof(*kf->finfo));
+		pos_lba = 0;
+		pos_offset = 0;
+		flags = flags;
+		kprintf("%d %d\n",pos_lba,kf->fent->data_ent_lba);
+		return *(int*)kf;
+	}*/
+}
+KFILE *_open(const char *fname){
+	/*struct KFILE *kf = malloc(sizeof(*kf));
+	kf->fent = get_fdat(fname);
+	kf->fdat = __parse_fdat(kf->fent->data_ent_lba,kf->fent->data_ent_offset);
+	pos_lba = 0;
+	pos_offset = 0;
+        flags = 0;
+	return kf;*/
+}
+int read(int fd,void *buf,int n){
+	//struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+	kprintf("%s\n",f->name);
+	struct KFILE *kf = malloc(1024);
+	kf->fent = get_fdat(f->name);
+	kf->fdat = __parse_fdat(kf->fent->data_ent_lba,kf->fent->data_ent_offset);
+	//kf->fent = get_fdat(&fd);
+	//kf->fdat = __parse_fdat(kf->fent->data_ent_lba,kf->fent->data_ent_offset);
+	//uint32_t pos_lba = (uint32_t)((&fd) + strlen(fname));
+	//uint16_t pos_offset = (uint16_t)((&fd) + strlen(fname) + sizeof(uint32_t));
+	//uint8_t flags = (uint8_t)((&fd) + strlen(fname) + sizeof(uint32_t) + sizeof(uint16_t));
+	uint32_t pos_lba = f->pos_lba;
+	uint16_t pos_offset = f->pos_offset;
+	uint8_t flags = f->flags;
+//	kprintf("%d %d %d %d\n",pos_lba,pos_offset,kf->fent->data_ent_lba,kf->fent->data_ent_offset);
+	if((n) > (kf->fdat->tlba * 512 - pos_lba * 512 - pos_offset)){
+		//kprintf("1\n");
+		kprintf("R:%d->%d\n",pos_lba + kf->fent->data_ent_lba,kf->fent->data_ent_lba + pos_lba + kf->fdat->tlba * 512);
+
+		int written = kf->fdat->tlba * 512 - pos_lba * 512 - pos_offset;
+		if(written <= 0){
+			kprintf("Less than zero\n");
+			return 0;
+		}
+		uint8_t *tmp = malloc(1024);
+		for(int i = pos_lba + kf->fent->data_ent_lba ,j = 0;i < kf->fent->data_ent_lba + pos_lba + (kf->fdat->tlba) * 512;j++,i++){
+//			if(i != pos_lba)
+//				_ata_read_master(buf + (j * 512),kf->fent->data_ent_lba + j + 1,0);
+//			else
+//				_ata_read_master(buf + (j * 512),kf->fent->data_ent_lba + j + 1,0);
+			ata_read_master(tmp,kf->fent->data_ent_lba +j + 1,0);
+			if(i != pos_lba)
+				memcpy(buf + j * 512,tmp,512);
+			else
+				memcpy(buf + j * 512,tmp + pos_offset,512 - pos_offset);
+		}
+		pos_lba+=kf->fdat->tlba * 512 - pos_lba;
+		pos_offset = 0;
+		return written;
+	}else{
+		//kprintf("2\n");
+		uint8_t *tmp = malloc(1024);
+		kprintf("R:%d:%d->%d:%d\n",pos_lba + kf->fent->data_ent_lba,pos_offset,kf->fent->data_ent_lba + pos_lba + n/512,0);
+		for(int i = pos_lba + kf->fent->data_ent_lba,j = 0; i < (kf->fent->data_ent_lba + pos_lba + n/512);j++,i++){
+			_ata_read_master(tmp,kf->fent->data_ent_lba + j + 1,0);
+//			if(i != pos_lba)
+//				_ata_read_master(buf + (j * 512),j + pos_lba +kf->fent->data_ent_lba,0);
+//			else
+//				_ata_read_master(buf + (j * 512),j + pos_lba + kf->fent->data_ent_lba
+			if(i != pos_lba)
+				memcpy(buf + j * 512,tmp,512);
+			else
+				memcpy(buf + j * 512,tmp + pos_offset,512 - pos_offset);
+		}
+		pos_lba+=n/512;
+		pos_offset=n%512;
+		return n;
+	}
+
+}
+int close(int fd){
+	struct KFILE *kf = &fd;
+	free(kf);
+	return 1;
+}
 int _read_file(const char *name,void *pntr){
 /*
 	int last = 0;

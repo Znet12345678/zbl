@@ -1,3 +1,4 @@
+#ifdef __BUILD_FS_IO
 #include "fs.h"
 #include <lib.h>
 int getLastInstance(const char *name,int c){
@@ -40,3 +41,4 @@ int _mkdir(const char *dirname){
 		return -1;
 	}
 }
+#endif
