@@ -1,7 +1,9 @@
+#include "libelf.h"
 #include <stdint.h>
 #include "zfs.h"
 #include "fat.h"
 #include "genfs.h"
+#include "idt.h"
 void print(const char *str){
 	kprintf("%s",str);
 }
@@ -24,6 +26,12 @@ void *memcpy(void *dstptr,const void *srcptr,unsigned long size){
 	for(int i = 0; i < size;i++)
 		dst[i] = src[i];
 	return dstptr;
+}
+void* memset(void* bufptr, int value, unsigned long size) {
+	unsigned char* buf = (unsigned char*) bufptr;
+	for (unsigned long i = 0; i < size; i++)
+		buf[i] = (unsigned char) value;
+	return bufptr;
 }
 void panic(){
 	kprintf("panic()");
@@ -53,6 +61,18 @@ char *strcat(char *dest,const char *src){
 int main(){
 	mem_init();
 	t_readvals();
+//	for(int i = 0; i < 80;i++)
+//		memcpy(it + i*sizeof(zero),&zero,sizeof(zero));
+//	memcpy(it + 80 * sizeof(zero),&idt,sizeof(idt));
+//	for(int i = 81; i < 200;i++)
+//		memcpy(it + i * sizeof(zero),&zero,sizeof(zero));
+//	load_idt(it,0x1000);
+//	struct idt_descr *i80 = malloc(sizeof(*it)*200);
+	//struct idt_descr *idtt = malloc(sizeof(*idtt)*256);
+	//for(int i = 0; i < 100;i++)
+	//	idtt[i] = idt;
+	//load_idt(idtt,256 * sizeof(struct idt_descr) - 1);
+	//setup_idt();
 	char *memtest = malloc(1024);
 	strcpy(memtest,"Malloc doesn't work\n");
 	free(memtest);
@@ -85,6 +105,57 @@ int main(){
 //	kprintf("%s",ls);
 	char *init = malloc(1024);
 	strcpy(init,"/fs/init.elf");
+	char *isr = malloc(1024);
+	strcpy(isr,"/fs/isr.ko");
+	uint8_t *pnt = malloc(fsize(isr));
+	int fd = open(isr,O_RDONLY,0);
+	read(fd,pnt,fsize(isr));
+	uint8_t *dest= (uint8_t*)0x00F00000;
+	int *bin = exec_elf(dest,pnt);
+	//bin();
+	//while(1);
+	struct Elf32_Hdr *hdr = (struct Elf32_Hdr *)pnt;
+	//memcpy(idt,&idtt,sizeof(idt)*256 - 1);
+	//memset(&idt,0,sizeof(idt)*256);
+	struct elf32_Phdr *phdr = (struct elf32_Phdr *)pnt + hdr->phdr_pos;
+	int start = phdr[0].p_paddr;
+	//int offset = 0x00F00000 + hdr->entry - start;
+//	c6 05 00 80 0b 00 78 eb  fe
+	/**(int*)0x800 = 0xc6;
+	*(int*)0x801 = 0x05;
+	*(int*)0x802 = 0;
+	*(int*)0x803 = 0x80;
+	*(int*)0x804 = 0x0b;
+	*(int*)0x805 = 0;
+	*(int*)0x806 = 0x78;
+	*(int*)0x807 = 0xeb;
+	*(int*)0x808 = 0xfe;*/
+//	__asm__("ljmp $8,%0" : : "r"(offset));
+	int offset = 0x00F00000;
+	//int offset = *;
+	struct idt_descr *_idt = malloc(sizeof(*_idt));
+	_idt->offset_1 = offset;
+	_idt->offset_2 = offset >> 16;
+	_idt->zero = 0;
+	_idt->type_attr = 0b10001110;
+	_idt->selector = 0x08;
+	struct idt_descr *idt = malloc(sizeof(*idt)*256);
+	struct idt_descr *null = malloc(sizeof(*null));
+	null->type_attr = 0;
+	null->offset_1 = 0;
+	null->offset_2 = 0;
+	null->zero = 0;
+	null->selector = 0;
+	for(int i = 0; i < 0x80;i++)
+		idt[i] = *null;
+	for(int i = 0x81;i < 256;i++)
+		idt[i] = *null;
+	idt[0x80] = *_idt;
+	load_idt(idt,sizeof(*idt) * 256 - 1);
+//	idtp.limit = sizeof(idt[0])*256-1;
+//	idtp.base = (unsigned int)idt;
+//	idt_load();
+	//while(1);
 	__exec(init);
 	//opendir("/safas");
 	struct __superblock *sblk = __genfs_parse_superblock();

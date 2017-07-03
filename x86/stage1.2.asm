@@ -102,8 +102,10 @@ int 0x10
 mov ax,3
 int 0x10
 cli
+mov word [0x000],code
 lgdt [gdtr]
-lidt [idt]
+sgdt [0x0000]
+;lidt [idt]
 mov eax,cr0
 or eax,1
 mov cr0,eax

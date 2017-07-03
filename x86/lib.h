@@ -2,6 +2,7 @@
 #define __LIB_H
 #include <stdint.h>
 #include "genfs.h"
+void hello_world();
 int load_elf_from_memory(uint8_t *pntr);
 void delay();
 struct __fdat *__parse_fdat(int lba,int offset);

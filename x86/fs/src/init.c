@@ -28,6 +28,7 @@ int shell(char *cmd){
 }
 int main(){
 	mem_init();
+	__asm__("mov $0,%ah\nint $0x80");
 	t_readvals();
 	list("/");
 	kprintf("Control given to init!\n");

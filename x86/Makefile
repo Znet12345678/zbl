@@ -6,10 +6,14 @@ all:
 	rm -f libk.a
 	rm -f *.img
 #	make -C fs/src
+	nasm -f elf isr.asm -o isr.o
+	nasm -f elf idt.asm -o idt.asm.o
+#	${CC} isr.o idt.asm.o -o fs/isr.ko -lk
 	cc pad.c -o pad
 	cc -c mkgenfs.c -o mkgenfs.o -I. -DLINUX -std=gnu99 -Werror
 	cc mkgenfs.o -o mkgenfs
 	${CC} -c libelf.c -o libelf.o ${CFLAGS}
+	${CC} -c idt.c -o idt.o ${CFLAGS} -Werror
 	i386-elf-gcc -c genfs.c -o genfs.o ${CFLAGS}
 	i386-elf-gcc -c libmem.c -o libmem.o ${CFLAGS} -Werror
 	i386-elf-gcc -c libzfs.c -o libzfs.o ${CFLAGS} -Werror -fmax-errors=1
@@ -66,7 +70,7 @@ all:
 	i386-elf-gcc -c boot.S -o boot.o ${CFLAGS}
 	i386-elf-gcc -c fs.c -o fs.o ${CFLAGS}  -Werror
 	nasm -f elf boot.asm -o boot.elf
-	i386-elf-gcc ${CFLAGS} -Tlinker.ld crti.o crtn.o boot.o _tty.o lib.o fs.o ata.o kernel.o libelf.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o ${CRTBEGIN} ${CRTEND} libmem.o elf.o -o kernel.elf
+	i386-elf-gcc ${CFLAGS} -Tlinker.ld crti.o crtn.o boot.o _tty.o idt.o lib.o fs.o ata.o kernel.o libelf.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o ${CRTBEGIN} ${CRTEND} libmem.o elf.o idt.asm.o isr.o -o kernel.elf
 #	./genfsfromfile fs.img  dummy.2.bin stage2.2.bin msg.txt kernel.lfs.bin kernel.lfs.elf dummy.bin helloworld.elf dummy.3.elf kernel.elf
 	./genfsfromfile fs.img kernel.elf stage2.2.bin msg.txt
 	gcc genkernimg.c -o genkernimg -std=gnu99
@@ -80,12 +84,13 @@ all:
 	rm -f hd.img.1
 	./genkernimg bootloader.raw kernel.elf install.pre
 	i386-elf-gcc -c _tty.c -o _tty.qemu.o -DQEMU_BUILD ${CFLAGS}
-	i386-elf-gcc crti.o crtn.o elf.o boot.o genfs.o _tty.qemu.o lib.o fs.o ata.o kernel.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o  ${CRTBEGIN} ${CRTEND} libzfs.o libmem.o libelf.o -o kernel.elf.qemu ${CFLAGS} -T linker.ld
+	i386-elf-gcc crti.o crtn.o elf.o isr.o boot.o genfs.o _tty.qemu.o lib.o fs.o ata.o kernel.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o  ${CRTBEGIN} ${CRTEND} libzfs.o libmem.o libelf.o idt.o idt.asm.o -o kernel.elf.qemu ${CFLAGS} -T linker.ld
 	@qemu-img create install.img.1 100M
 	@echo "Compiling and archiving libk.a"
 	@i386-elf-gcc -c libk.c -o libk.o ${CFLAGS}
-	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} crti.o crtn.o libk.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o fs.o libmem.o libelf.o
+	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} idt.asm.o crti.o isr.o crtn.o libk.o idt.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o fs.o libmem.o libelf.o
 #	make -C fs/src
+	${CC} -Tlinker.isr.ld isr.o -o fs/isr.ko -lk -L. -nostdlib
 	@echo "Compiling and linking yourkernel.elf"
 	@i386-elf-gcc -c yourkernel.c -o yourkernel.elf.o ${CFLAGS}
 	@i386-ld -Tlinker.ld yourkernel.elf.o -o yourkernel.elf -L. -lk
