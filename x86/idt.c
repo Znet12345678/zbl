@@ -11,3 +11,6 @@ void load_idt(void *base,int size){
 void helloworld(){
 	kprintf("Interupts work!\n");
 }
+void write_int(int a){
+	kprintf("%d\n",a);
+}

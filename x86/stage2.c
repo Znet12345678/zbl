@@ -51,6 +51,19 @@ void strcat(char *dest,const char *src){
 }
 int main(){
 	t_init();
+	int *drives = detect_drives();
+	for(int i = 0; i < 4;i++)
+		if(drives[i] == 1){
+			uint8_t *buf = malloc(513);
+			__ata_read_master(buf,0,i);
+			if(buf[2] == 0x1f && buf[3] == 0xaf && buf[4] == 0x0f && buf[5] == 0x9f){
+				*(int*)0x499 = i;
+				kprintf("Found kernel on drive %d\n",i);
+				//while(1);
+				goto g;
+			}
+		}
+
 	print("Scanning for installation media\n");
 	print("HDA->");
 	uint8_t *buf = malloc(513);

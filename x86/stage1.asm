@@ -5,8 +5,8 @@ db 0x1f;Signature for installation media
 db 0xaf
 db 0x0f
 db 0x9f
-a:mov ah,0
-mov al,0x13
+a:mov ah,0x0e
+mov al,'.'
 int 0x10
 global err
 global loop1
@@ -27,8 +27,27 @@ mov al,1
 mov ch,0
 mov cl,2
 mov dh,0
-inc dl;incriment drive counter
+jmp drive
+re:
+;inc dl;incriment drive counter
 jmp loop1;loop
+drive:cmp dl,0
+jz floppy2
+cmp dl,1
+jz hda
+cmp dl,0x80
+jz hdb
+cmp dl,0x81
+mov ah,0x0e
+mov al,'E'
+int 0x10
+__hng:jmp __hng
+floppy2:mov dl,1
+jmp re
+hda:mov dl,0x80
+jmp re
+hdb:mov dl,0x81
+jmp re
 check:
 jmp check1
 check1:
@@ -66,18 +85,18 @@ mov ch,0
 mov cl,2
 mov dh,0
 cmp dl,0
-jz fdb
+jz _fdb
 cmp dl,1
-jz hda
+jz _hda
 cmp dl,0x80
-jz hdb
+jz _hdb
 mov dl,0x80
 jmp loop1
-fdb:mov dl,1
+_fdb:mov dl,1
 jmp loop1
-hda:mov dl,0x80
+_hda:mov dl,0x80
 jmp loop1
-hdb:mov dl,0x81
+_hdb:mov dl,0x81
 jmp loop1
 times 510 - ($ - $$) db 0
 dw 0xaa55

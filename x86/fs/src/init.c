@@ -17,6 +17,7 @@ int shell(char *cmd){
 	if(!ret)
 		return 0;
 	uint8_t *pntr = (uint8_t*)0x00100000;
+//	uint8_t *pntr = (uint8_t*)0x8048000;
 	uint8_t *jmp = exec_elf(pntr,buf);
 	int (*main)(int argc,char **argv) = (int*)jmp;
 	kprintf("\n");
@@ -29,6 +30,19 @@ int shell(char *cmd){
 int main(){
 	mem_init();
 	__asm__("mov $0,%ah\nint $0x80");
+	__asm__("mov $1,%ah\nmov $9,%al\nint $0x80");
+	char *pntr = malloc(1024);
+	strcpy(pntr,"Test");
+//	__asm__("movl %0,%%ebx" : : "m"(pntr));
+//	__asm__("movl $2,%ah\nmovl %0,%%ebx\nmovl $1,%ecx\nmovl $2,%edx\n" : : "m"(pntr));
+	__asm__("mov $2,%ah");
+	__asm__("movl %0,%%ebx" : : "m"(pntr));
+	__asm__("movl $1,%ecx");
+	__asm__("movl $2,%edx");
+	__asm__("int $0x80");
+	int ret;
+	__asm__("movl %%eax,%0" : "=m"(ret) :);
+//	kprintf("%d\n",ret);
 	t_readvals();
 	list("/");
 	kprintf("Control given to init!\n");

@@ -4,8 +4,13 @@
 #define TYPE_DIR 0
 #define TYPE_FILE 1
 #define TYPE_DEV 2
-#define O_RDONLY 0x15
-#define O_RDWRITE 0x20
+#define O_RDONLY 0x00
+#define O_WRONLY 0x01
+#define O_RDWRITE 0x02
+# define SEEK_SET       0       /* Seek from beginning of file.  */
+# define SEEK_CUR       1       /* Seek from current position.  */
+# define SEEK_END       2       /* Seek from end of file.  */
+#define SEEK_CURR SEEK_CUR
 struct fd{
 	uint8_t alloc;
 	uint8_t name[80];

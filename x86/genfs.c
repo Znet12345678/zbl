@@ -356,8 +356,26 @@ KFILE *_open(const char *fname){
         flags = 0;
 	return kf;*/
 }
+int lseek(int fd,int n,int mode){
+	if(mode == SEEK_SET){
+		struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+		f->pos_lba = n/512;
+		f->pos_offset = n%512;
+	}else if(mode == SEEK_END){
+		struct fd *f = (struct fd*)(0x00007E00 + fd * sizeof(*f));
+		f->pos_lba = fsize(f->name)/512;
+		f->pos_offset = fsize(f->name)%512;
+	}else if(mode == SEEK_CURR){
+		struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+		f->pos_lba+=n/512;
+		f->pos_offset+=n%512;
+	}
+	return 1;
+}
 int read(int fd,void *buf,int n){
 	//struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+	if(fd < 0)
+		return 0;
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
 //	kprintf("%s\n",f->name);
 	struct KFILE *kf = malloc(1024);
@@ -395,6 +413,8 @@ int read(int fd,void *buf,int n){
 		}
 		pos_lba+=kf->fdat->tlba * 512 - pos_lba;
 		pos_offset = 0;
+		f->pos_lba = pos_lba;
+		f->pos_offset = pos_offset;
 		return written;
 	}else{
 		//kprintf("2\n");
@@ -428,14 +448,20 @@ int read(int fd,void *buf,int n){
 		}
 		pos_lba+=n/512;
 		pos_offset=n%512;
+		f->pos_lba = pos_lba;
+		f->pos_offset = pos_offset;
 		return n;
 	}
 
 }
 int close(int fd){
-	struct KFILE *kf = &fd;
-	free(kf);
+	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(struct fd));
+	f->alloc = 0;
+	fd = -1;
 	return 1;
+	///struct KFILE *kf = &fd;
+	//free(kf);
+	//return 1;
 }
 int _read_file(const char *name,void *pntr){
 /*
@@ -516,6 +542,18 @@ int __exec(const char *path){
 	t_writevals();
 	return main();
 }
+int exec(char *name,char **argv,char **env){
+        int size = fsize(name);
+        uint8_t *file = malloc(size);
+        int fd = open(name,O_RDONLY,0);
+        int val = read(fd,file,size);
+        if(val <= 0)
+                return -1;
+        uint8_t *dest = malloc(size);
+        exec_elf(dest,file);
+        return 1;
+}
+
 int __find_free_blk_lba(){
 	struct __data *dat = __find_free_blk();
 	return dat->lba;

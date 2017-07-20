@@ -9,6 +9,71 @@ void delay(){
 	for(int i = 0; i < 4;i++)
 		inb(0x1FC);
 }
+uint8_t send_ident_cmd(uint16_t io,uint8_t slave){
+	outb(io + 6,slave);
+        outb(io + 2,1);
+        outb(io + 3,0);
+        outb(io + 4,0);
+        outb(io + 5,0);
+        outb(io + 7,0xEC);
+        uint8_t status = inb(io + 7);
+	uint8_t stat = inb(io + 7);
+	if(status == 0)
+		return status;
+	while(stat & 0x80)
+		stat = inb(io + 7);
+	stat = inb(io + 7);
+	uint8_t val = inb(io + 4);
+	//if(val != 0)
+	//	return 0;
+	//val = inb(io + 5);
+	//if(val != 0)
+	//	return 0;
+	while(!(stat & 0x08)){
+		if(stat & 1)
+			return 0;
+		stat = inb(io + 7);
+	}
+	for(int i = 0; i < 256;i++)
+		inb(io);
+	return stat;
+}
+int *detect_drives(){
+	int *drives = malloc(1024);
+	print("Trying primary master...\n");
+	uint8_t status = send_ident_cmd(0x1F0,0xA0);
+	if(status == 0)
+		drives[0] = 0;
+	else{
+		print("Master is detected\n");
+		drives[0] = 1;
+	}
+	print("Trying Primary slave\n");
+	status = send_ident_cmd(0x1F0,0xB0);
+	if(status == 0)
+		drives[1] = 0;
+	else{
+		print("Slave is detected\n");
+		drives[1] = 1;
+	}
+	print("Trying secondary master\n");
+	status = send_ident_cmd(0x170,0xA0);
+	if(status == 0)
+		drives[2] = 0;
+	else{
+		print("Secondary master is detected\n");
+		drives[2] = 1;
+	}
+	print("Trying secondary slave\n");
+	status = send_ident_cmd(0x170,0xA0);
+	if(status  == 0)
+		drives[3] = 0;
+	else{
+		print("Secondary slave is detected\n");
+		drives[3] = 1;
+	}
+	return drives;
+}
 /*static inline void outw(uint16_t port,uint8_t val){
      __asm__ volatile ("outw %w0, %w1" : : "a"(val), "Nd"(port));
 }
@@ -36,7 +101,7 @@ int ide_wait_for_write(){
     }
     uint8_t stat = inb(0x1F7);
     while(stat & 0x80)
-        ;
+        stat = inb(0x1f7);
     stat = inb(0x1F7);
         if(!(stat & 0x08))
             return -1;
@@ -153,28 +218,65 @@ int ata_read_master_nb(uint8_t *buf,uint32_t lba,uint8_t n){
 		i++;
 	}
 }
+int __ata_read_master(uint8_t *buf,uint32_t lba,uint16_t drive){
+	uint16_t io;
+	uint8_t slavebit;
+	if(drive == 0){
+		io = 0x1f0;
+		slavebit = 0xE0;
+	}else if(drive == 1){
+		io = 0x1f0;
+		slavebit = 0xF0;
+	}else if(drive == 2){
+		io = 0x170;
+		slavebit = 0xe0;
+	}else if(drive == 3){
+		io = 0x170;
+		slavebit = 0xe0;
+	}
+	outb(io + 0x06,(slavebit | (uint8_t)((lba >> 24 & 0x0F))));
+        outb(io + 1,0x00);
+        outb(io + 0x02,1);
+        outb(io + 0x03,(uint8_t)lba);
+        outb(io + 0x04,(uint8_t)((lba) >> 8));
+        outb(io + 0x05,(uint8_t)((lba) >> 16));
+        outb(io + 0x07,0x20);
+	if(ide_wait_for_read(io) < 0)
+                return 0;
+	int i = 0;
+	while(i < 256){
+                uint16_t data = inw(io);
+                *(uint16_t *)(buf + i * 2) = data;
+                i++;
+        }
+	return 1;
+}
 int ata_read_master(uint8_t *buf,uint32_t lba,uint16_t drive){
 	uint16_t io;
 
 	uint8_t cmd = 0xe0;
-	if(drive == 0){
+	if(*(int*)0x499 == 0){
 		#ifdef DEBUG
 		print("[ata]Using primary drive\n");
 		#endif
 		io = 0x1F0;
 		cmd = 0xE0;
 	}
-	else if(drive == 1){
+	else if(*(int*)0x499 == 1){
 		#ifdef DEBUG
 		print("[ata]Using secondary drive\n");
 		#endif
 		io = 0x1F0;
 		cmd = 0xF0;
 	}
-	else if(drive == 2)
-		io = 0x4138;
-	else if(drive == 3)
-		io = 0x3f0;
+	else if(*(int*)0x499 == 2){
+		io = 0x170;
+		cmd = 0xE0;
+	}
+	else if(*(int*)0x499 == 3){
+		io = 0x170;
+		cmd = 0xF0;
+	}
 	uint8_t slavebit = 0x00;
 	//print("Sending LBA and CMD\n");
 	outb(io + 0x06,(cmd | (uint8_t)((lba >> 24 & 0x0F))));

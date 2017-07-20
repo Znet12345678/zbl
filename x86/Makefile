@@ -5,7 +5,10 @@ CRTEND=$(shell $(CC) -print-file-name=crtend.o)
 all:
 	rm -f libk.a
 	rm -f *.img
+	@make -C libc install
 #	make -C fs/src
+#	${CC} -c syscalls.c -o syscalls.o ${CFLAGS}
+#	i386-zbl-gcc newlibtest.c -o fs/exec/newlibtest.elf
 	nasm -f elf isr.asm -o isr.o
 	nasm -f elf idt.asm -o idt.asm.o
 #	${CC} isr.o idt.asm.o -o fs/isr.ko -lk
@@ -90,7 +93,7 @@ all:
 	@i386-elf-gcc -c libk.c -o libk.o ${CFLAGS}
 	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} idt.asm.o crti.o isr.o crtn.o libk.o idt.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o fs.o libmem.o libelf.o
 #	make -C fs/src
-	${CC} -Tlinker.isr.ld isr.o -o fs/isr.ko -lk -L. -nostdlib
+	${CC} -Tlinker.isr.ld isr.o -o fs/kernel.ko -lk -L. -nostdlib
 	@echo "Compiling and linking yourkernel.elf"
 	@i386-elf-gcc -c yourkernel.c -o yourkernel.elf.o ${CFLAGS}
 	@i386-ld -Tlinker.ld yourkernel.elf.o -o yourkernel.elf -L. -lk

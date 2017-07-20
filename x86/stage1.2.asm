@@ -73,9 +73,9 @@ int 0x10
 _hng:jmp _hng
 _check:cmp byte[0x7DF7],0x01
 jz _check2
-mov ah,0x0e
-mov al,'0'
-int 0x10
+;mov ah,0x0e
+;mov al,'0'
+;int 0x10
 jmp _err
 _check2:cmp byte[0x7DF8],0x0f
 jz _check3
@@ -92,14 +92,17 @@ mov ah,0x0e
 mov al,'2'
 int 0x10
 jmp _err
-load:mov ax,3
-int 0x10
+load:;;mov ax,3
+;int 0x10
 jmp 0x07e03
 goprotected:
+;mov ah,0
+;mov al,0x14
+;int 0x10
+;mov ax,3
+;int 0x10
 mov ah,0
-mov al,0x14
-int 0x10
-mov ax,3
+mov al,2
 int 0x10
 cli
 mov word [0x000],code

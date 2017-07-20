@@ -2,6 +2,7 @@
 #define __LIB_H
 #include <stdint.h>
 #include "genfs.h"
+int *detect_drives();
 void hello_world();
 int load_elf_from_memory(uint8_t *pntr);
 void delay();

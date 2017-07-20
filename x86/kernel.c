@@ -106,7 +106,7 @@ int main(){
 	char *init = malloc(1024);
 	strcpy(init,"/fs/init.elf");
 	char *isr = malloc(1024);
-	strcpy(isr,"/fs/isr.ko");
+	strcpy(isr,"/fs/kernel.ko");
 	uint8_t *pnt = malloc(fsize(isr));
 	int fd = open(isr,O_RDONLY,0);
 	read(fd,pnt,fsize(isr));

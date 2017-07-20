@@ -1,6 +1,9 @@
 #include <stdint.h>
 #include "lib.h"
-
+int dummy(char *path,int flags,int mode){
+	kprintf("%s %d %d\n",path,flags,mode);
+	return 50;
+}
 int __ide_wait_for_read(uint16_t io){
         int i = 0;
         while(i < 4){

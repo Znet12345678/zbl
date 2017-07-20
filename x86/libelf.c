@@ -32,6 +32,17 @@ int *exec_elf(void *dest,void *src){
 	int *pntr = (int*)(dest + hdr->entry - start);
 	return pntr;
 }
+/*int exec(char *name,char **argv,char **env){
+	int size = fsize(name);
+	uint8_t *file = malloc(size);
+	int fd = open(name,O_RDONLY,0);
+	int val = read(fd,file,size);
+	if(val <= 0)
+		return -1;
+	uint8_t *dest = malloc(size);
+	exec_elf(dest,file);
+	return 1;
+}*/
 int exec_elf_args(void *dest,void *src,int argc,char **argv){
 	uint8_t *u8src = (uint8_t*)src;
 	uint8_t *u8dest = (uint8_t*)dest;

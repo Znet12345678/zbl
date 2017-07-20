@@ -11,8 +11,13 @@ all:
 	${CC} -c help.c -o help.o ${CFLAGS}
 	${CC} -c echo.c -o echo.o ${CFLAGS}
 	${CC} -c cat.c -o cat.o ${CFLAGS}
+	${CC} -c nlldr.c -o nlldr.o ${CFLAGS}
+	i386-zbl-gcc -c libctest.c -o libctest.o ${CFLAGS}
 	${LD} -Tlinker.2.ld boot.o help.o -o ../exec/help.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o ls.o -o ../exec/ls.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.ld boot.o  init.o -o ../init.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o echo.o -o ../exec/echo.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o cat.o -o ../exec/cat.elf -L../.. -lk -nostdlib
+	${LD} -Tlinker.2.ld boot.o nlldr.o -o ../exec/nlldr.elf -L../.. -lk -nostdlib
+#	i386-zbl-gcc newlibtest.c -o ../exec/newlibtest.elf
+	i386-zbl-gcc -Tlinker.2.ld libctest.o -o ../exec/libctest.elf -L../libc/src -lc
