@@ -12,4 +12,5 @@ typedef unsigned long nlink_t;
 typedef long blksize_t;
 typedef long blkcnt_t;
 typedef long off_t;
+typedef int time_t;
 #endif/*__SYS_TYPES_H*/

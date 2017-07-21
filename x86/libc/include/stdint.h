@@ -8,4 +8,5 @@ typedef int int32_t;
 typedef unsigned int uint32_t;
 typedef long int int64_t;
 typedef unsigned long int uint64_t;
+typedef uint64_t uintmax_t;
 #endif

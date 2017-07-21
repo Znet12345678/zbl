@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <string.h>
 void mem_init(){
 	uint8_t *pntr = (uint8_t *)0x01000000;
 	struct mem_part *mem = (struct mem_part *)0x01000000;
@@ -102,6 +103,9 @@ void *malloc(unsigned long _rsize){
 		mem = mem->nxt;
 	}*/
 	return (void*)ret;
+}
+void *calloc(size_t num,size_t size){
+	return malloc(num*size);
 }
 void free(void *v){
 	uint8_t *pntr = (uint8_t*)0x01000000;

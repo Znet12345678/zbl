@@ -1,4 +1,4 @@
-STR_OBJS = objs/strlen.o objs/strcpy.o objs/strcat.o objs/strcmp.o objs/strncmp.o objs/memcpy.o objs/memmove.o objs/memset.o
+STR_OBJS = objs/strlen.o objs/strcpy.o objs/strcat.o objs/strcmp.o objs/strncmp.o objs/memcpy.o objs/memmove.o objs/memset.o objs/strncpy.o objs/strncat.o objs/memcmp.o
 str_LIBRARIES = libstr.a
 KERN_OBJS = objs/print.o objs/t_readvals.o objs/t_writevals.o objs/kprintf.o objs/t_putc.o
 kern_LIBRARIES = libkern.a
@@ -8,23 +8,26 @@ ctype_LIBRARIES = libctype.a
 MAIN_OBJS = ${str_OBJS} ${kern_OBJS} ${ctype_OBJS}
 main_LIBRARIES = libc.a
 CC=i386-zbl-gcc
-CFLAGS += -I../include -nostdlib
+CFLAGS += -I../include -nostdlib -Werror
 AR=i386-zbl-ar
 all:
 	${CC} -c strlen.c -o objs/strlen.o ${CFLAGS}
 	${CC} -c strcpy.c -o objs/strcpy.o ${CFLAGS}
 	${CC} -c strcat.c -o objs/strcat.o ${CFLAGS}
+	${CC} -c strncpy.c -o objs/strncpy.o ${CFLAGS}
+	${CC} -c strncat.c -o objs/strncat.o ${CFLAGS}
 	${CC} -c strcmp.c -o objs/strcmp.o ${CFLAGS}
 	${CC} -c strncmp.c -o objs/strncmp.o ${CFLAGS}
 	${CC} -c memcpy.c -o objs/memcpy.o ${CFLAGS}
 	${CC} -c memmove.c -o objs/memmove.o ${CFLAGS}
+	${CC} -c memcmp.c -o objs/memcmp.o ${CFLAGS}
 	${CC} -c crt0.c -o objs/crt0.o ${CFLAGS}
 	${CC} -c memset.c -o objs/memset.o ${CFLAGS}
 	${AR} rcs libstr.a ${STR_OBJS}
 	${CC} -c print.c -o objs/print.o ${CFLAGS}
 	${CC} -c t_readvals.c -o objs/t_readvals.o ${CFLAGS}
 	${CC} -c t_writevals.c -o objs/t_writevals.o ${CFLAGS}
-	${CC} -c kprintf.c -o objs/kprintf.o ${CFLAGS}
+	${CC} -c kprintf.c -o objs/kprintf.o ${CFLAGS} -Wno-error
 	${CC} -c crti.S -o objs/crti.o ${CFLAGS}
 	${CC} -c crtn.S -o objs/crtn.o ${CFLAGS}
 	${CC} -c t_putc.c -o objs/t_putc.o ${CFLAGS}

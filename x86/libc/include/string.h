@@ -4,6 +4,7 @@
 */
 #ifndef __STRING_H/*__STRING_H*/
 #define __STRING_H
+
 #include <sys/types.h>
 #if defined(__cplusplus)
 extern "C" {
@@ -49,6 +50,16 @@ int strncmp(const char *str1,const char *str2,size_t n);
 *sets n bytes of pntr to val
 */
 void *memset(void *pntr,int value,size_t n);
+/*
+*memcmp (mem1,mem2,n)
+*Compares two memory locations to eachother
+*/
+int memcmp(const void *mem1,const void *mem2,size_t n);
+/*
+*strncpy(dest,src,n)
+*/
+char *strncpy(char *dest,const char *src,size_t n);
+char *strncat(char *dest,const char *src,size_t n);
 #if defined(__cplusplus)
 }
 #endif
