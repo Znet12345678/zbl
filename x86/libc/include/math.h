@@ -59,4 +59,11 @@ double nextafter(double, double);
 double remainder(double, double);
 double rint(double);
 double scalb(double, double);
+double ipow(double,int);
+int fact(int n);
+double sin(double);
+#ifdef __TBUILD
+int factT(int n);
+double sinT(double n);
+#endif
 #endif

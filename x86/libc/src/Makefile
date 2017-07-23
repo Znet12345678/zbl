@@ -6,7 +6,9 @@ CTYPE_OBJS = objs/isalnum.o objs/isalpha.o objs/iscntrl.o objs/isdigit.o objs/is
 STDLIB_OBJS = objs/malloc.o
 ctype_LIBRARIES = libctype.a
 MAIN_OBJS = ${str_OBJS} ${kern_OBJS} ${ctype_OBJS}
+MATH_OBJS = objs/fact.o objs/sin.o objs/pow.o
 main_LIBRARIES = libc.a
+MATHT_OBJS = objs/factt.o objs/sint.o objs/powt.o
 CC=i386-zbl-gcc
 CFLAGS += -I../include -nostdlib -Werror
 AR=i386-zbl-ar
@@ -49,3 +51,11 @@ all:
 	${CC} -c malloc.c -o objs/malloc.o ${CFLAGS}
 	${AR} rcs libstd.a ${STDLIB_OBJS}
 	${AR} rcs libc.a objs/crti.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
+	${CC} -c pow.c -o objs/pow.o ${CFLAGS}
+	${CC} -c fact.c -o objs/fact.o ${CFLAGS}
+	${CC} -c sin.c -o objs/sin.o ${CFLAGS}
+	${AR} rcs libm.a ${MATH_OBJS}
+	gcc -c pow.c -o objs/powt.o  -D__TBUILD
+	gcc -c fact.c -o objs/factt.o  -D__TBUILD
+	gcc -c sin.c -o objs/sint.o  -D__TBUILD
+	ar rcs libmatht.a ${MATHT_OBJS}

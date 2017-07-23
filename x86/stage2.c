@@ -52,6 +52,7 @@ void strcat(char *dest,const char *src){
 int main(){
 	t_init();
 	int *drives = detect_drives();
+	kprintf("Searching for kernel\n");
 	for(int i = 0; i < 4;i++)
 		if(drives[i] == 1){
 			uint8_t *buf = malloc(513);
@@ -62,8 +63,10 @@ int main(){
 				//while(1);
 				goto g;
 			}
+			kprintf("Kernel not found on drive %d\n",i);
 		}
-
+	print("Kernel not found!\n");
+	panic();
 	print("Scanning for installation media\n");
 	print("HDA->");
 	uint8_t *buf = malloc(513);

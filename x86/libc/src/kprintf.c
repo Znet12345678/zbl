@@ -104,6 +104,13 @@ void printf(const char *format,...){
 				i++;
 			}
 
+		}else if(*format == 'f'){
+			format++;
+			float j = (float)va_arg(args,float);
+			int n = (int)j;
+			float j2 = j - n;
+			j2*=5;
+			printf("%d.%d",j,j2);
 		}
 		else
 			goto badconv;

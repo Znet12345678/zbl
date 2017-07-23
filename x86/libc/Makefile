@@ -1,5 +1,6 @@
 all:
 	make -C src
+	make -C test
 install:
 	make -C src
 	cp src/*.a /usr/local/i386-zbl/lib
