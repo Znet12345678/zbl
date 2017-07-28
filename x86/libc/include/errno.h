@@ -6,4 +6,5 @@ extern int errno;
 #define ERANGE -3
 #define ENOMEM -4
 #define EEXIST -5
+#define EIO -6
 #endif

@@ -24,12 +24,15 @@ int *exec_elf(void *dest,void *src){
 	for(int i = 0; i < hdr->num_ent_phdr;i++){
 		if(!start)
 			start = phdr[i].p_paddr;
+		//if(phdr[i].type == 1)
+		//	memmove((unsigned char *)(dest + phdr[i].p_vaddr - start),(unsigned char *)(src + phdr[i].p_offset),phdr[i].p_filesz);
 		if(phdr[i].type == 1)
-			memmove((unsigned char *)(dest + phdr[i].p_vaddr - start),(unsigned char *)(src + phdr[i].p_offset),phdr[i].p_filesz);
+			memcpy(phdr[i].p_vaddr,src + phdr[i].p_offset,phdr[i].p_filesz);
 	}
 	//t_writevals();
 	//int (*main)() = (int*)(dest + hdr->entry - start);
-	int *pntr = (int*)(dest + hdr->entry - start);
+//	int *pntr = (int*)(dest + hdr->entry - start);
+	int *pntr = hdr->entry;
 	return pntr;
 }
 /*int exec(char *name,char **argv,char **env){

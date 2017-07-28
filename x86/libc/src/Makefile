@@ -1,18 +1,19 @@
-STR_OBJS = objs/strlen.o objs/strcpy.o objs/strcat.o objs/strcmp.o objs/strncmp.o objs/memcpy.o objs/memmove.o objs/memset.o objs/strncpy.o objs/strncat.o objs/memcmp.o
+STR_OBJS = objs/todo.o objs/strlen.o objs/strcpy.o objs/strcat.o objs/strcmp.o objs/strncmp.o objs/memcpy.o objs/memmove.o objs/memset.o objs/strncpy.o objs/strncat.o objs/memcmp.o objs/strchr.o
 str_LIBRARIES = libstr.a
 KERN_OBJS = objs/print.o objs/t_readvals.o objs/t_writevals.o objs/kprintf.o objs/t_putc.o
 kern_LIBRARIES = libkern.a
 CTYPE_OBJS = objs/isalnum.o objs/isalpha.o objs/iscntrl.o objs/isdigit.o objs/isgraph.o objs/islower.o objs/isupper.o objs/isprint.o objs/ispunct.o objs/isspace.o objs/isxdigit.o objs/tolower.o objs/toupper.o
-STDLIB_OBJS = objs/malloc.o
+STDLIB_OBJS = objs/malloc.o objs/abort.o objs/exec.o
 ctype_LIBRARIES = libctype.a
 MAIN_OBJS = ${str_OBJS} ${kern_OBJS} ${ctype_OBJS}
 MATH_OBJS = objs/fact.o objs/sin.o objs/pow.o
 main_LIBRARIES = libc.a
 MATHT_OBJS = objs/factt.o objs/sint.o objs/powt.o
 CC=i386-zbl-gcc
-CFLAGS += -I../include -nostdlib -Werror
+CFLAGS += -I../include -nostdlib -Werror -ffreestanding
 AR=i386-zbl-ar
 all:
+	${CC} -c todo.c -o objs/todo.o ${CFLAGS}
 	${CC} -c strlen.c -o objs/strlen.o ${CFLAGS}
 	${CC} -c strcpy.c -o objs/strcpy.o ${CFLAGS}
 	${CC} -c strcat.c -o objs/strcat.o ${CFLAGS}
@@ -25,6 +26,7 @@ all:
 	${CC} -c memcmp.c -o objs/memcmp.o ${CFLAGS}
 	${CC} -c crt0.c -o objs/crt0.o ${CFLAGS}
 	${CC} -c memset.c -o objs/memset.o ${CFLAGS}
+	${CC} -c strchr.c -o objs/strchr.o ${CFLAGS}
 	${AR} rcs libstr.a ${STR_OBJS}
 	${CC} -c print.c -o objs/print.o ${CFLAGS}
 	${CC} -c t_readvals.c -o objs/t_readvals.o ${CFLAGS}
@@ -49,6 +51,8 @@ all:
 	${CC} -c toupper.c -o objs/toupper.o ${CFLAGS}
 	${AR} rcs libctype.a ${CTYPE_OBJS}
 	${CC} -c malloc.c -o objs/malloc.o ${CFLAGS}
+	${CC} -c abort.c -o objs/abort.o ${CFLAGS}
+	${CC} -c exec.c -o objs/exec.o ${CFLAGS}
 	${AR} rcs libstd.a ${STDLIB_OBJS}
 	${AR} rcs libc.a objs/crti.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
 	${CC} -c pow.c -o objs/pow.o ${CFLAGS}

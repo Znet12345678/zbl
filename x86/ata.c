@@ -242,7 +242,7 @@ int __ata_read_master(uint8_t *buf,uint32_t lba,uint16_t drive){
         outb(io + 0x05,(uint8_t)((lba) >> 16));
         outb(io + 0x07,0x20);
 	if(ide_wait_for_read(io) < 0)
-                return 0;
+		return 0;
 	int i = 0;
 	while(i < 256){
                 uint16_t data = inw(io);

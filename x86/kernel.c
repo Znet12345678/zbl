@@ -36,7 +36,7 @@ void* memset(void* bufptr, int value, unsigned long size) {
 void panic(){
 	kprintf("panic()");
 	while(1)
-		;
+		__asm__("hlt");
 }
 unsigned long strlen(const char *str){
 	int ret = 0;

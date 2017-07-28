@@ -20,4 +20,4 @@ all:
 	${LD} -Tlinker.2.ld boot.o cat.o -o ../exec/cat.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o nlldr.o -o ../exec/nlldr.elf -L../.. -lk -nostdlib
 #	i386-zbl-gcc newlibtest.c -o ../exec/newlibtest.elf
-	i386-zbl-gcc -Tlinker.2.ld libctest.o -o ../exec/libctest.elf -L../libc/src -lc
+	i386-zbl-gcc  libctest.o -o ../exec/libctest.elf -L../libc/src -lc

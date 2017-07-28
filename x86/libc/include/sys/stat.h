@@ -1,6 +1,7 @@
 #ifndef __SYS_STAT_H
 #define __SYS_STAT_H
 #include <sys/types.h>
+#include <time.h>
 struct stat {
 	mode_t			st_mode;
 	ino_t			st_ino;
@@ -12,5 +13,6 @@ struct stat {
 	off_t			st_size;
 	blksize_t		st_blksize;
 	blkcnt_t		st_blocks;
+	time_t			st_mtime;		
 };
 #endif

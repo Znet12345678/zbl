@@ -60,6 +60,8 @@ int memcmp(const void *mem1,const void *mem2,size_t n);
 */
 char *strncpy(char *dest,const char *src,size_t n);
 char *strncat(char *dest,const char *src,size_t n);
+char *strchr(const char *str,int c);
+char *strrchr(const char *str,int c);
 #if defined(__cplusplus)
 }
 #endif

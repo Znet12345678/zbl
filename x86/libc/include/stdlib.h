@@ -14,5 +14,13 @@ struct mem_part{
         uint8_t *end;
         uint32_t n;
 };
-
+#ifndef NULL
+#define NULL 0
+#endif
+void abort();
+void exec(const char *str);
+void *bsearch(const void *key, const void *base,
+                     size_t nmemb, size_t size,
+                     int (*compar)(const void *, const void *));
+void *realloc(void *pntr,size_t s);
 #endif

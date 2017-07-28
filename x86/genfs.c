@@ -550,8 +550,11 @@ int exec(char *name,char **argv,char **env){
         if(val <= 0)
                 return -1;
         uint8_t *dest = malloc(size);
-        exec_elf(dest,file);
-        return 1;
+        int (*main)(int argc,char **argv) = exec_elf(dest,file);
+	int argc = 0;
+	while(argv[argc] != 0)
+		argc++;
+        return main(argc,argv);
 }
 
 int __find_free_blk_lba(){

@@ -15,7 +15,7 @@
 #define	O_EXCL		0x0800		/* error if already exists */
 #define	O_NONBLOCK	0x0004		/* no delay */
 #define	O_APPEND	0x0008	
-int open(const char *path, int flags,int mode);
+//int open(const char *path, int flags);
 int read(int fd,void *buf,int n);
 int write(int fd,void *buf,int n);	
 #endif

@@ -34,7 +34,7 @@ void print(const char *str){
 void panic(){
 	print("panic()");
 	while(1)
-		;
+		__asm__("hlt");
 }
 char *strcpy(char *dest,const char *src){
 	int i = strlen(dest);
@@ -56,14 +56,16 @@ int main(){
 	for(int i = 0; i < 4;i++)
 		if(drives[i] == 1){
 			uint8_t *buf = malloc(513);
-			__ata_read_master(buf,0,i);
+			int r = __ata_read_master(buf,0,i);
+			if(!r)
+				kprintf("I/O Error\n");
 			if(buf[2] == 0x1f && buf[3] == 0xaf && buf[4] == 0x0f && buf[5] == 0x9f){
 				*(int*)0x499 = i;
 				kprintf("Found kernel on drive %d\n",i);
 				//while(1);
 				goto g;
 			}
-			kprintf("Kernel not found on drive %d\n",i);
+			kprintf("Kernel not found on drive %d,sig %d %d %d %d\n",i,buf[2],buf[3],buf[4],buf[5]);
 		}
 	print("Kernel not found!\n");
 	panic();
