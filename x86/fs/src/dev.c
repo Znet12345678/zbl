@@ -28,7 +28,9 @@ int main(int argc,char *argv[]){
 	strcat(path,argv[1]);
 	int fd = open(path,O_RDWR);
 	int size = atoi(argv[2]);
-	uint8_t *buf = malloc(size);
+	uint8_t *buf = malloc(size + 1);
+	printf("%d %d\n",fd,size);
+	while(1);
 	read(fd,buf,size);
 	for(int i = 0; i < size;i++)
 		printf("%c",buf[i]);

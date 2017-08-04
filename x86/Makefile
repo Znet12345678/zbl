@@ -73,7 +73,12 @@ all:
 	i386-elf-gcc -c boot.S -o boot.o ${CFLAGS}
 	i386-elf-gcc -c fs.c -o fs.o ${CFLAGS}  -Werror
 	i386-elf-gcc -c dev.c -o dev.o ${CFLAGS}
+#	@echo "Compiling and archiving libk.a"
+#	@i386-elf-gcc -c libk.c -o libk.o ${CFLAGS}
+#	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} idt.asm.o crti.o isr.o dev.o crtn.o libk.o idt.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o fs.o libmem.o libelf.o
 	nasm -f elf boot.asm -o boot.elf
+	nasm -f elf panic.asm -o panic.o
+#	i386-elf-gcc -T panic.ld panic.o -o fs/panic.ko -nostdlib
 	i386-elf-gcc ${CFLAGS} -Tlinker.ld crti.o crtn.o boot.o _tty.o idt.o lib.o fs.o ata.o kernel.o libelf.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o ${CRTBEGIN} ${CRTEND} libmem.o elf.o idt.asm.o isr.o dev.o -o kernel.elf
 #	./genfsfromfile fs.img  dummy.2.bin stage2.2.bin msg.txt kernel.lfs.bin kernel.lfs.elf dummy.bin helloworld.elf dummy.3.elf kernel.elf
 	./genfsfromfile fs.img kernel.elf stage2.2.bin msg.txt
@@ -94,6 +99,7 @@ all:
 	@i386-elf-gcc -c libk.c -o libk.o ${CFLAGS}
 	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} idt.asm.o crti.o isr.o dev.o crtn.o libk.o idt.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o fs.o libmem.o libelf.o
 #	make -C fs/src
+	i386-elf-gcc -T panic.ld panic.o -o fs/panic.ko -nostdlib -lk -L.
 	${CC} -Tlinker.isr.ld isr.o -o fs/kernel.ko -lk -L. -nostdlib
 	@echo "Compiling and linking yourkernel.elf"
 	@i386-elf-gcc -c yourkernel.c -o yourkernel.elf.o ${CFLAGS}

@@ -43,6 +43,7 @@ int main(){
 	__asm__("movl $1,%ecx");
 	__asm__("movl $2,%edx");
 	__asm__("int $0x80");
+//	__asm__("int $0x1F");
 	int ret;
 	__asm__("movl %%eax,%0" : "=m"(ret) :);
 //	kprintf("%d\n",ret);

@@ -6,7 +6,7 @@ int *exec_elf(void *unused/*for compatability with older versions of this os*/,v
 //	uint8_t *u8dest = (uint8_t*)dest;
 	struct Elf32_Hdr *hdr = (struct Elf32_Hdr*)src;
 	int start = 0;
-	kprintf("Parsing elf...\n");
+//	kprintf("Parsing elf...\n");
 	if(hdr->e_ident[0] != 0x7f || hdr->e_ident[1] != 'E' || hdr->e_ident[2] != 'L' || hdr->e_ident[3] != 'F'){
 		print("Invalid sig\n");
 		kprintf("{[%d],[%c],[%c],[%c]}\n",hdr->e_ident[0],hdr->e_ident[1],hdr->e_ident[2],hdr->e_ident[3]);

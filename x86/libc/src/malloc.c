@@ -8,8 +8,8 @@
 #include <stdint.h>
 #include <string.h>
 void mem_init(){
-	uint8_t *pntr = (uint8_t *)0x01000000;
-	struct mem_part *mem = (struct mem_part *)0x01000000;
+	uint8_t *pntr = (uint8_t *)0x10000000;
+	struct mem_part *mem = (struct mem_part *)0x10000000;
 	mem->alloc = 0;
 	mem->size = 0;
 	mem->complete = 0;
@@ -60,10 +60,10 @@ struct mem_part *find_free(uint8_t *pntr,unsigned long size){
 
 void *malloc(unsigned long _rsize){
 	unsigned long rsize = _rsize;
-	uint8_t *_pntr = (uint8_t *)0x01000000;
+	uint8_t *_pntr = (uint8_t *)0x10000000;
 	struct mem_part *mem = find_free(_pntr,rsize);
 	int allocated = 0;
-	uint8_t *ret = mem->begin - 0x01000000 + 0x00000500 - 1;
+	uint8_t *ret = mem->begin - 0x10000000 + 0x00000500 - 1;
 
 	*ret = mem->n;
 	*ret++;
@@ -108,7 +108,7 @@ void *calloc(size_t num,size_t size){
 	return malloc(num*size);
 }
 void free(void *v){
-	uint8_t *pntr = (uint8_t*)0x01000000;
+	uint8_t *pntr = (uint8_t*)0x10000000;
 	uint8_t *_pntr = (uint8_t*)v;
 	struct mem_part *mem = find_n(pntr,*(_pntr - 1));
 	mem->alloc = 0;

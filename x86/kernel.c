@@ -112,8 +112,15 @@ int main(){
 	uint8_t *pnt = malloc(fsize(isr));
 	int fd = open(isr,O_RDONLY,0);
 	read(fd,pnt,fsize(isr));
+	char *panic = malloc(1024);
+	strcpy(panic,"/fs/panic.ko");
+	uint8_t *_pnt = malloc(fsize(panic));
+	int pfd = open(panic,O_RDONLY,0);
+	int n = read(pfd,_pnt,fsize(panic));
 	uint8_t *dest= (uint8_t*)0x00F00000;
 	int *bin = exec_elf(dest,pnt);
+	int *exe_poffset = exec_elf(dest,_pnt);
+//	goto *exe_poffset;
 	//bin();
 	//while(1);
 	struct Elf32_Hdr *hdr = (struct Elf32_Hdr *)pnt;
@@ -134,6 +141,7 @@ int main(){
 	*(int*)0x808 = 0xfe;*/
 //	__asm__("ljmp $8,%0" : : "r"(offset));
 	int offset = 0x00F00000;
+	int poffset = 0x20000000;
 	//int offset = *;
 	struct idt_descr *_idt = malloc(sizeof(*_idt));
 	_idt->offset_1 = offset;
@@ -142,13 +150,21 @@ int main(){
 	_idt->type_attr = 0b10001110;
 	_idt->selector = 0x08;
 	struct idt_descr *idt = malloc(sizeof(*idt)*256);
+	struct idt_descr *panicidt = malloc(sizeof(*panic));
+	panicidt->offset_1 = poffset;
+	panicidt->offset_2 = poffset >> 16;
+	panicidt->zero = 0;
+	panicidt->type_attr = 0b10011110;
+	panicidt->selector = 0x08;
 	struct idt_descr *null = malloc(sizeof(*null));
 	null->type_attr = 0;
 	null->offset_1 = 0;
 	null->offset_2 = 0;
 	null->zero = 0;
 	null->selector = 0;
-	for(int i = 0; i < 0x80;i++)
+	for(int i = 0; i < 0x20;i++)
+		idt[i] = *panicidt;
+	for(int i = 0x20; i < 0x80;i++)
 		idt[i] = *null;
 	for(int i = 0x81;i < 256;i++)
 		idt[i] = *null;
