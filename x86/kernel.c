@@ -141,7 +141,7 @@ int main(){
 	*(int*)0x808 = 0xfe;*/
 //	__asm__("ljmp $8,%0" : : "r"(offset));
 	int offset = 0x00F00000;
-	int poffset = 0x20000000;
+	int poffset = 0x05000000;
 	//int offset = *;
 	struct idt_descr *_idt = malloc(sizeof(*_idt));
 	_idt->offset_1 = offset;
@@ -154,7 +154,7 @@ int main(){
 	panicidt->offset_1 = poffset;
 	panicidt->offset_2 = poffset >> 16;
 	panicidt->zero = 0;
-	panicidt->type_attr = 0b10011110;
+	panicidt->type_attr = 0b10001111;
 	panicidt->selector = 0x08;
 	struct idt_descr *null = malloc(sizeof(*null));
 	null->type_attr = 0;

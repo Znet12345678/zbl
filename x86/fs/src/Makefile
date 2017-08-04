@@ -15,6 +15,7 @@ all:
 	${CC} -c nlldr.c -o nlldr.o ${CFLAGS}
 	i386-zbl-gcc -c dev.c -o dev.o ${ALTCFLAGS}
 	i386-zbl-gcc -c libctest.c -o libctest.o ${ALTCFLAGS}
+	i386-zbl-gcc -c crash.c -o crash.o ${ALTCFLAGS}
 	${LD} -Tlinker.2.ld boot.o help.o -o ../exec/help.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o ls.o -o ../exec/ls.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.ld boot.o  init.o -o ../init.elf -L../.. -lk -nostdlib
@@ -24,3 +25,4 @@ all:
 #	i386-zbl-gcc newlibtest.c -o ../exec/newlibtest.elf
 	i386-zbl-gcc  libctest.o -o ../exec/libctest.elf -L../libc/src -lc
 	i386-zbl-gcc  dev.o -o ../exec/dev.elf -lc
+	i386-zbl-gcc crash.o -o ../exec/crash.elf -lc
