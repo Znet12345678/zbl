@@ -66,6 +66,8 @@ call write_int
 nop
 leave
 call t_writevals
+pop eax
+
 iret
 _open:push ebp
 mov ebp,esp
@@ -79,6 +81,7 @@ leave
 push eax
 call t_writevals
 pop eax
+
 iret
 _close:push ebp
 mov ebp,esp
@@ -90,6 +93,7 @@ leave
 push eax
 call t_writevals
 pop eax
+
 iret
 _exec:push ebp
 mov ebp,esp
@@ -100,6 +104,7 @@ call exec
 nop
 leave
 call t_writevals
+add esp,12
 iret
 _lseek:push ebp
 mov ebp,esp
@@ -110,6 +115,7 @@ call lseek
 nop
 leave
 call t_writevals
+add esp,12
 iret
 _print:push ebp
 mov ebp,esp
@@ -118,6 +124,7 @@ call kprintf
 nop
 leave
 call t_writevals
+
 iret
 _iread:push ebp
 mov ebp,esp
@@ -131,6 +138,7 @@ mov [ebp-4],eax
 push eax
 call t_writevals
 pop eax
+
 iret
 _t_readvals:
 call t_readvals
@@ -146,6 +154,7 @@ call t_putc
 nop
 leave
 call t_writevals
+
 iret
 imalloc:push ebp
 mov ebp,esp
@@ -156,4 +165,3 @@ nop
 leave
 call t_writevals
 iret
-

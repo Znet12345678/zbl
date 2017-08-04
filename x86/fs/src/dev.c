@@ -26,5 +26,11 @@ int main(int argc,char *argv[]){
 	char *path = malloc(1024);
 	strcpy(path,"/dev/");
 	strcat(path,argv[1]);
+	int fd = open(path,O_RDWR);
+	int size = atoi(argv[2]);
+	uint8_t *buf = malloc(size);
+	read(fd,buf,size);
+	for(int i = 0; i < size;i++)
+		printf("%c",buf[i]);
 	return 1;
 }
