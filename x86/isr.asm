@@ -1,4 +1,5 @@
 [bits 32]
+section .text
 global hwint
 extern helloworld
 extern t_readvals
@@ -13,6 +14,7 @@ extern exec
 extern read
 extern malloc
 extern t_putc
+extern dread
 align 4
 hwint:pushad
 cld
@@ -33,7 +35,7 @@ jz _lseek
 cmp ah,6
 jz _print
 cmp ah,7
-jz _read
+jz _iread
 cmp ah,8
 jz _t_readvals
 cmp ah,9
@@ -42,6 +44,15 @@ cmp ah,10
 jz imalloc
 cmp ah,11
 jz _t_putc
+mov ebx,'E'
+push ebp
+mov ebp,esp
+push ebx
+call t_putc
+push eax
+call t_writevals
+pop eax
+hng:jmp hng
 iret
 hw:call helloworld
 call t_writevals
@@ -65,7 +76,9 @@ call open
 mov [ebp-4],eax
 nop
 leave
+push eax
 call t_writevals
+pop eax
 iret
 _close:push ebp
 mov ebp,esp
@@ -74,7 +87,9 @@ call close
 mov [ebp-4],eax
 nop
 leave
+push eax
 call t_writevals
+pop eax
 iret
 _exec:push ebp
 mov ebp,esp
@@ -104,7 +119,7 @@ nop
 leave
 call t_writevals
 iret
-_read:push ebp
+_iread:push ebp
 mov ebp,esp
 push edx
 push ecx
@@ -112,7 +127,10 @@ push ebx
 call read
 nop
 leave
+mov [ebp-4],eax
+push eax
 call t_writevals
+pop eax
 iret
 _t_readvals:
 call t_readvals

@@ -1,4 +1,5 @@
 #include <lib.h>
+#include <genfs.h>
 int shell(char *cmd){
 	char **arr = sep(cmd,' ');
 	int last = 0;
@@ -13,7 +14,9 @@ int shell(char *cmd){
 	if(!size)
 		return 0;
 	uint8_t *buf = malloc(size);
-	int ret = read_file(path,buf);
+	int fd = open(path,O_RDONLY,0);
+	int ret = read(fd,buf,size);
+//	int ret = read_file(path,buf);
 	if(!ret)
 		return 0;
 	uint8_t *pntr = (uint8_t*)0x00100000;

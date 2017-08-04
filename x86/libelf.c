@@ -1,9 +1,9 @@
 #include "lib.h"
 #include "mem.h"
 #include "libelf.h"
-int *exec_elf(void *dest,void *src){
+int *exec_elf(void *unused/*for compatability with older versions of this os*/,void *src){
 	uint8_t *u8src = (uint8_t*)src;
-	uint8_t *u8dest = (uint8_t*)dest;
+//	uint8_t *u8dest = (uint8_t*)dest;
 	struct Elf32_Hdr *hdr = (struct Elf32_Hdr*)src;
 	int start = 0;
 	kprintf("Parsing elf...\n");

@@ -3,7 +3,7 @@ str_LIBRARIES = libstr.a
 KERN_OBJS = objs/print.o objs/t_readvals.o objs/t_writevals.o objs/kprintf.o objs/t_putc.o
 kern_LIBRARIES = libkern.a
 CTYPE_OBJS = objs/isalnum.o objs/isalpha.o objs/iscntrl.o objs/isdigit.o objs/isgraph.o objs/islower.o objs/isupper.o objs/isprint.o objs/ispunct.o objs/isspace.o objs/isxdigit.o objs/tolower.o objs/toupper.o
-STDLIB_OBJS = objs/malloc.o objs/abort.o objs/exec.o
+STDLIB_OBJS = objs/malloc.o objs/abort.o objs/exec.o objs/open.o objs/read.o objs/atoi.o
 ctype_LIBRARIES = libctype.a
 MAIN_OBJS = ${str_OBJS} ${kern_OBJS} ${ctype_OBJS}
 MATH_OBJS = objs/fact.o objs/sin.o objs/pow.o
@@ -13,6 +13,7 @@ CC=i386-zbl-gcc
 CFLAGS += -I../include -nostdlib -Werror -ffreestanding
 AR=i386-zbl-ar
 all:
+	${CC} -c errno.c -o objs/errno.o ${CFLAGS}
 	${CC} -c todo.c -o objs/todo.o ${CFLAGS}
 	${CC} -c strlen.c -o objs/strlen.o ${CFLAGS}
 	${CC} -c strcpy.c -o objs/strcpy.o ${CFLAGS}
@@ -53,8 +54,11 @@ all:
 	${CC} -c malloc.c -o objs/malloc.o ${CFLAGS}
 	${CC} -c abort.c -o objs/abort.o ${CFLAGS}
 	${CC} -c exec.c -o objs/exec.o ${CFLAGS}
+	${CC} -c open.c -o objs/open.o ${CFLAGS}
+	${CC} -c read.c -o objs/read.o ${CFLAGS}
+	${CC} -c atoi.c -o objs/atoi.o ${CFLAGS}
 	${AR} rcs libstd.a ${STDLIB_OBJS}
-	${AR} rcs libc.a objs/crti.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
+	${AR} rcs libc.a objs/crti.o objs/errno.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
 	${CC} -c pow.c -o objs/pow.o ${CFLAGS}
 	${CC} -c fact.c -o objs/fact.o ${CFLAGS}
 	${CC} -c sin.c -o objs/sin.o ${CFLAGS}

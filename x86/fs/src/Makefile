@@ -1,5 +1,6 @@
 CC=i386-elf-gcc
 CFLAGS=-nostdlib -ffreestanding -std=gnu99 -I../..
+ALTCFLAGS=-nostdlib -ffreestanding -std=gnu99
 LDFLAGS=-lk -L../.. -nostdlib -T../../linker.ld
 CRTBEGIN=$(shell $(CC) -print-file-name=crtbegin.o)
 CRTEND=$(shell $(CC) -print-file-name=crtend.o)
@@ -12,7 +13,8 @@ all:
 	${CC} -c echo.c -o echo.o ${CFLAGS}
 	${CC} -c cat.c -o cat.o ${CFLAGS}
 	${CC} -c nlldr.c -o nlldr.o ${CFLAGS}
-	i386-zbl-gcc -c libctest.c -o libctest.o ${CFLAGS}
+	i386-zbl-gcc -c dev.c -o dev.o ${ALTCFLAGS}
+	i386-zbl-gcc -c libctest.c -o libctest.o ${ALTCFLAGS}
 	${LD} -Tlinker.2.ld boot.o help.o -o ../exec/help.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o ls.o -o ../exec/ls.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.ld boot.o  init.o -o ../init.elf -L../.. -lk -nostdlib
@@ -21,3 +23,4 @@ all:
 	${LD} -Tlinker.2.ld boot.o nlldr.o -o ../exec/nlldr.elf -L../.. -lk -nostdlib
 #	i386-zbl-gcc newlibtest.c -o ../exec/newlibtest.elf
 	i386-zbl-gcc  libctest.o -o ../exec/libctest.elf -L../libc/src -lc
+	i386-zbl-gcc  dev.o -o ../exec/dev.elf -lc

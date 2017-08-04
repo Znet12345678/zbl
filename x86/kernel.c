@@ -73,6 +73,8 @@ int main(){
 	//	idtt[i] = idt;
 	//load_idt(idtt,256 * sizeof(struct idt_descr) - 1);
 	//setup_idt();
+	kprintf("Generating devices...\n");
+	init_devs();	
 	char *memtest = malloc(1024);
 	strcpy(memtest,"Malloc doesn't work\n");
 	free(memtest);

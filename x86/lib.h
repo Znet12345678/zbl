@@ -9,7 +9,7 @@ void delay();
 struct __fdat *__parse_fdat(int lba,int offset);
 void t_writevals();
 int elf_get_size(void *pntr);
-int *exec_elf(void *dest,void *src);
+int *exec_elf(void *unused,void *src);
 void debug(const char *func,const char *msg);
 int ata_write_master(uint8_t *buf,uint32_t _lba);
 int _ata_write_master(uint8_t *pntr,uint32_t lba);

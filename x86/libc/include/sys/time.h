@@ -1,5 +1,5 @@
-#ifndef __TIME_H
-#define __TIME_H
+#ifndef __SYS_TIME_H
+#define __SYS_TIME_H
 #define TIME
 #include <sys/types.h>
 typedef struct timeval {

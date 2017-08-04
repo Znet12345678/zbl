@@ -108,7 +108,7 @@ int mkdir(const char *path);
 struct __data_ent *__parse_dent(int lba,int offset);
 int list(const char *path);
 int write_file(char *fpath,uint8_t *dat, int n);
-int open(const char *str,int flags,int mode);
+//int open(const char *str,int flags,int mode);
 int read(int fd,void *buf,int count);
 int write(int fd,void *buf,int count);
 int close(int fd);

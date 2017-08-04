@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include "genfs.h"
 #include "lib.h"
+#include "dev.h"
 #include "mem.h"
 int __is_genfs(){
 	int lba = 0;
@@ -318,6 +319,7 @@ struct fd *alloc_fd(){
 }
 int open(const char *fname,int flags,int mode){
 	int ret = alloc_fd();
+//	kprintf("%s\n",fname);
 	struct fd *f = (struct fd *)(0x00007E00 + ret * sizeof(struct fd));
 	//kprintf("%s\n",fname);
 	memcpy(f->name,fname,80);
@@ -372,11 +374,75 @@ int lseek(int fd,int n,int mode){
 	}
 	return 1;
 }
+int read_dev_hd(void *buf,int io,int slave,int bytes,uint16_t lba,int offset){
+	int cmd = slave;
+	outb(io + 0x06,(cmd | (uint8_t)((lba >> 24 & 0x0F))));
+        outb(io + 1,0x00);
+        outb(io + 0x02,bytes / 512 + 1);
+        outb(io + 0x03,(uint8_t)lba);
+        outb(io + 0x04,(uint8_t)((lba) >> 8));
+        outb(io + 0x05,(uint8_t)((lba) >> 16));
+        outb(io + 0x07,0x20);
+	if(ide_wait_for_read(io) < 0)
+                return 0;
+	uint8_t *u8buf = (uint8_t*)buf;
+	for(int i = 0; i < offset;i++)
+		inw(io);
+	for(int i = 0; i < bytes;i++){
+		uint16_t bytes = inw(io);
+		*(uint16_t *)(buf + i * 2) = bytes;
+	}
+	for(int i = 0; i < bytes %512;i++)
+		inw(io);
+	return bytes % 512;
+}
 int read(int fd,void *buf,int n){
 	//struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
-	if(fd < 0)
+	if(fd < 0){
+		kprintf("Bad File Descriptor!\n");
 		return 0;
+	}
+//	kprintf("READ{%d,%s,%d}\n",fd,(uint8_t*)buf,n);
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+	if(strncmp(f->name,"/dev",3) == 0){
+		dev_t dev = (dev_t)0x00A00000;
+		char *ident = malloc(3);
+		memcpy(ident,f->name + strlen(f->name) - 3,3);
+		while(strcmp(dev->ident,ident) != 0 && dev->alloc == 1)
+			dev+=sizeof(*dev);
+		if(!dev->alloc){
+			kprintf("Error finding device!\n");
+			return -1;
+		}
+		if(dev->type == 0){
+			int bytes = 0;
+			if(dev->slave == 0)
+				bytes = read_dev_hd(buf,dev->io,0xE0,n,f->pos_lba,f->pos_offset);
+			else
+				bytes = read_dev_hd(buf,dev->io,0xF0,n,f->pos_lba,f->pos_offset);
+			f->pos_lba+=n/512;
+			f->pos_lba=bytes;
+			return n;
+		}else if(dev->type == 1){
+			uint8_t c,oldc;
+			int i = 0;
+			for(i = 0; i < n;i++){
+				 if(!(inb(0x64) & 1)){
+                        		oldc = c;
+                      			continue;
+               			}c = kgetc();
+				t_putc(c);
+				memcpy(buf + i,c,1);
+			}
+			return i;
+		}else if(dev->type == 2){
+			return 0;
+		}else if(dev->type == 3){
+			for(int i = 0; i < n;i++)
+				memcpy(buf + i,0,1);
+			return n;
+		}
+	}
 //	kprintf("%s\n",f->name);
 	struct KFILE *kf = malloc(1024);
 	kf->fent = get_fdat(f->name);
@@ -453,6 +519,9 @@ int read(int fd,void *buf,int n){
 		return n;
 	}
 
+}
+int dread(){
+	kprintf("READ\n");
 }
 int close(int fd){
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(struct fd));

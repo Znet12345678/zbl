@@ -20,4 +20,5 @@ void t_writevals();
 *Loads the terminal data
 */
 void t_readvals();
+extern char **env;
 #endif/*__KERNEL_H*/
