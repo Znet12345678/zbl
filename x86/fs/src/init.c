@@ -1,5 +1,18 @@
 #include <lib.h>
+#include <mem.h>
 #include <genfs.h>
+void _mem_init(){
+        uint8_t *pntr = (uint8_t *)0x10000000;
+        struct mem_part *mem = (struct mem_part *)0x10000000;
+        mem->alloc = 0;
+        mem->size = 0;
+        mem->complete = 0;
+        mem->nxt = (struct mem_part *)0;
+        mem->begin = (uint8_t *)0;
+        mem->end = (uint8_t *)0;
+}
+
+
 int shell(char *cmd){
 	char **arr = sep(cmd,' ');
 	int last = 0;
@@ -32,6 +45,7 @@ int shell(char *cmd){
 }
 int main(){
 	mem_init();
+	_mem_init();
 	__asm__("mov $0,%ah\nint $0x80");
 	__asm__("mov $1,%ah\nmov $9,%al\nint $0x80");
 	char *pntr = malloc(1024);

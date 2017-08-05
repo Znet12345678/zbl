@@ -15,6 +15,7 @@ extern read
 extern malloc
 extern t_putc
 extern dread
+extern free
 align 4
 hwint:pushad
 cld
@@ -44,6 +45,8 @@ cmp ah,10
 jz imalloc
 cmp ah,11
 jz _t_putc
+cmp ah,12
+jz ifree
 mov ebx,'E'
 push ebp
 mov ebp,esp
@@ -151,9 +154,17 @@ imalloc:push ebp
 mov ebp,esp
 push ebx
 call malloc
-mov [ebp-4],eax
+mov [ebp-12],eax
 nop
 leave
+push eax
 call t_writevals
+pop eax
 iret
-
+ifree:push ebp
+mov ebp,esp
+push ebx
+call free
+nop
+leave
+iret
