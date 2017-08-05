@@ -404,7 +404,7 @@ int read(int fd,void *buf,int n){
 	}
 //	kprintf("READ{%d,%s,%d}\n",fd,(uint8_t*)buf,n);
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
-	if(strncmp(f->name,"/dev",3) == 0){
+	if(strncmp(f->name,"/dev",4) == 0){
 		dev_t dev = (dev_t)0x00A00000;
 		char *ident = malloc(3);
 		memcpy(ident,f->name + strlen(f->name) - 3,3);
@@ -427,12 +427,16 @@ int read(int fd,void *buf,int n){
 			uint8_t c,oldc;
 			int i = 0;
 			for(i = 0; i < n;i++){
-				 if(!(inb(0x64) & 1)){
+				 a:;
+				if(!(inb(0x64) & 1)){
                         		oldc = c;
-                      			continue;
+                      			goto a;
                			}c = kgetc();
+				if(c == '\001')
+		                        goto a;
+
 				t_putc(c);
-				memcpy(buf + i,c,1);
+				memcpy(buf + i,&c,1);
 			}
 			return i;
 		}else if(dev->type == 2){

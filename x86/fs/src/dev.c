@@ -32,6 +32,6 @@ int main(int argc,char *argv[]){
 	uint8_t *buf = malloc(size + 1);
 	read(fd,buf,size);
 	for(int i = 0; i < size;i++)
-		printf("%c",buf[i]);
+		t_putc(buf[i]);
 	return 1;
 }
