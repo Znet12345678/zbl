@@ -1,6 +1,6 @@
 STR_OBJS = objs/todo.o objs/strlen.o objs/strcpy.o objs/strcat.o objs/strcmp.o objs/strncmp.o objs/memcpy.o objs/memmove.o objs/memset.o objs/strncpy.o objs/strncat.o objs/memcmp.o objs/strchr.o
 str_LIBRARIES = libstr.a
-KERN_OBJS = objs/print.o objs/t_readvals.o objs/t_writevals.o objs/kprintf.o objs/t_putc.o
+KERN_OBJS = objs/print.o objs/libelf.o objs/t_readvals.o objs/t_writevals.o objs/kprintf.o objs/t_putc.o objs/kexec.o objs/fsize.o
 kern_LIBRARIES = libkern.a
 CTYPE_OBJS = objs/isalnum.o objs/isalpha.o objs/iscntrl.o objs/isdigit.o objs/isgraph.o objs/islower.o objs/isupper.o objs/isprint.o objs/ispunct.o objs/isspace.o objs/isxdigit.o objs/tolower.o objs/toupper.o
 STDLIB_OBJS = objs/malloc.o objs/panic.o objs/abort.o objs/exec.o objs/open.o objs/read.o objs/atoi.o
@@ -36,6 +36,9 @@ all:
 	${CC} -c crti.S -o objs/crti.o ${CFLAGS}
 	${CC} -c crtn.S -o objs/crtn.o ${CFLAGS}
 	${CC} -c t_putc.c -o objs/t_putc.o ${CFLAGS}
+	${CC} -c kexec.c -o objs/kexec.o ${CFLAGS}
+	${CC} -c fsize.c -o objs/fsize.o ${CFLAGS}
+	${CC} -c libelf.c -o objs/libelf.o ${CFLAGS}
 	${AR} rcs libkern.a ${KERN_OBJS}
 	${CC} -c isalnum.c -o objs/isalnum.o ${CFLAGS}
 	${CC} -c isalpha.c -o objs/isalpha.o ${CFLAGS}

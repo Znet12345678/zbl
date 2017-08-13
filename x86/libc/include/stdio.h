@@ -8,6 +8,7 @@
 #include <sys/types.h>
 typedef struct __IO_FILE{
 	//TODO
+	int fd;
 }FILE;
 #define SEEK_SET 0
 #define SEEK_END 2

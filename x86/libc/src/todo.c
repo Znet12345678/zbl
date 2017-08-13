@@ -38,9 +38,9 @@ int sprintf(char *buf,const char *format,...){
 	printf("spritnf(...): TODO\n");
 	return -1;
 }
-FILE *stdin = (FILE*)0;
-FILE *stdout = (FILE*)0;
-FILE *stderr = (FILE*)0;
+FILE *stdin;
+FILE *stdout;
+FILE *stderr;
 void *bsearch(const void *key, const void *base,
                      size_t nmemb, size_t size,
                      int (*compar)(const void *, const void *)){

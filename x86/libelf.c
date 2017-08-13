@@ -93,3 +93,29 @@ int elf_get_size(void *mem){
 	return ret;
 
 }
+struct Elf32_Shdr *shdro(struct Elf32_Hdr *hdr){
+	return (struct Elf32_Shdr*)((int)hdr + hdr->shdr_pos);
+}
+struct Elf32_Shdr *shdrs(struct Elf32_Hdr *hdr,uint32_t index){
+	return &shdro(hdr)[index];
+}
+int contains_symbol(void *mem,const char *name){
+	struct Elf32_Hdr *hdr = (struct Elf32_Hdr*)mem;
+	struct Elf32_Shdr *shdr = shdro(mem);
+	for(int i = 0; i < hdr->num_of_ent_shdr;i++){
+		if(shdr[i].sh_type == 2){
+//			kprintf("%d %d\n",shdr[i].sh_size,shdr[i].sh_entsize);
+			for(int j = 0; j < shdr[i].sh_size / shdr[i].sh_entsize;j++){
+				int addr = (int)mem + shdr[i].sh_offset;
+				struct Elf32_SymTab *sym = &((struct Elf32_SymTab*)addr)[j];
+				struct Elf32_Shdr *str = shdrs(mem,shdr[i].sh_link);
+				char *rname = mem + str->sh_offset + sym->st_name;
+				if(strcmp(rname,name) == 0){
+					exec_elf(0,mem);
+					return sym->st_value;
+				}
+			}
+		}
+	}
+	return 0;
+}

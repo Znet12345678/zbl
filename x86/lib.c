@@ -1,5 +1,11 @@
 #include <stdint.h>
 #include "lib.h"
+void _error(){
+	int code;
+	asm("mov %%eax,%0" :"=m"(code));
+	kprintf("An error has occured!\n");
+	panic();
+}
 int dummy(char *path,int flags,int mode){
 	kprintf("%s %d %d\n",path,flags,mode);
 	return 50;

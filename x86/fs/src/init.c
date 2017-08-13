@@ -1,6 +1,7 @@
 #include <lib.h>
 #include <mem.h>
 #include <genfs.h>
+#include "init.h"
 void _mem_init(){
         uint8_t *pntr = (uint8_t *)0x10000000;
         struct mem_part *mem = (struct mem_part *)0x10000000;
@@ -64,7 +65,25 @@ int main(){
 	t_readvals();
 	list("/");
 	kprintf("Control given to init!\n");
-	kprintf("TODO\n");
+	kprintf("Reading init tasks\n");
+	char *path = malloc(1024);
+	strcpy(path,"/fs/init.tasks");
+	int fd = open("/fs/init.tasks");
+	uint8_t *file = malloc(fsize(path));
+	int bytes = read(fd,file,fsize(path));
+	if(bytes <= 0)
+		goto b;
+	struct init_task *task = (struct init_task *)file;
+	while(task->alloc){
+		uint8_t *path = malloc(task->pathlen);
+		memcpy(path,file + sizeof(struct init_task),task->pathlen);
+		char **argv = &path;
+		kprintf("[start]%s\n",path);
+		exec(path,argv,0);
+		kprintf("[end]%s\n",path);
+		task = task + sizeof(struct init_task) + task->pathlen;
+	}
+	b:;kprintf("Entering Shell\n");
 	char *cmd = malloc(1024);
 	while(1){
 		for(int i = 0; i < 1024;i++)

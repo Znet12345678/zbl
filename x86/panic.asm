@@ -1,6 +1,9 @@
 [bits 32]
 global _entry
-extern panic
+extern _error
 extern t_readvals
 _entry:call t_readvals
-call panic
+xor eax,eax
+pop eax
+call _error
+iret

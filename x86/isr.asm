@@ -16,6 +16,9 @@ extern malloc
 extern t_putc
 extern dread
 extern free
+extern fsize
+extern exec_elf
+extern contains_symbol
 align 4
 hwint:pushad
 cld
@@ -47,6 +50,12 @@ cmp ah,11
 jz _t_putc
 cmp ah,12
 jz ifree
+cmp ah,13
+jz _fsize
+cmp ah,14
+jz _kexec
+cmp ah,15
+jz _contains_symbol 
 mov ebx,'E'
 push ebp
 mov ebp,esp
@@ -167,4 +176,40 @@ push ebx
 call free
 nop
 leave
+iret
+_fsize:push ebp
+mov ebp,esp
+push ebx
+call fsize
+mov [ebp-4],eax
+nop
+leave
+push eax
+call t_writevals
+pop eax
+iret
+_kexec:push ebp
+mov ebp,esp
+push ecx
+push ebx
+call exec_elf
+mov [ebp-12],eax
+nop
+leave
+push eax
+call t_writevals
+pop eax
+iret
+_contains_symbol:
+push ebp
+mov ebp,esp
+push ecx
+push ebx
+call contains_symbol
+mov [ebp-4],eax
+nop
+leave
+push eax
+call t_writevals
+pop eax
 iret

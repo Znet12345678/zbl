@@ -113,8 +113,8 @@ mov eax,cr0
 or eax,1
 mov cr0,eax
 mov ebx,0xb8000
-mov al,'.'
-mov [fs:ebx],al
+;mov al,'.'
+;mov [fs:ebx],al
 jmp (code - null):finish
 bits 32
 finish:mov eax,0x10

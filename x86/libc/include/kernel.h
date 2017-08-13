@@ -21,4 +21,6 @@ void t_writevals();
 */
 void t_readvals();
 extern char **env;
+int fsize(const char *filename);
+int *kexec(void *unused,void *pntr);
 #endif/*__KERNEL_H*/

@@ -105,11 +105,15 @@ all:
 	@i386-elf-gcc -c yourkernel.c -o yourkernel.elf.o ${CFLAGS}
 	@i386-ld -Tlinker.ld yourkernel.elf.o -o yourkernel.elf -L. -lk
 	make -C fs/src
+	gcc gentasklist.c -o gentasklist -std=gnu99
+	./gentasklist fs/init.tasks /fs/kernel/setupdev.kt 
 	./mkgenfs fs install.img.1
 #	dd if=/dev/zero of=install.img.1 bs=1M count=100
 	./pad install.pre pad.bin
-	cat install.pre pad.bin install.img.1 > install.img
-	rm -f install.img.1
+	cat install.pre pad.bin install.img.1 > install.img.up
+	./pad install.img.up install.img.pad
+	cat install.img.up install.img.pad > install.img
+	rm -f install.img.1 install.img.up install.img.pad
 	@echo "Install Image is install.img"
 #	@echo "Compiling and archiving libk.a"
 #	@i386-elf-gcc -c libk.c -o libk.o ${CFLAGS}

@@ -26,3 +26,5 @@ all:
 	i386-zbl-gcc  libctest.o -o ../exec/libctest.elf -L../libc/src -lc
 	i386-zbl-gcc  dev.o -o ../exec/dev.elf -lc
 	i386-zbl-gcc crash.o -o ../exec/crash.elf -lc
+	@make -C ../kernel/src
+	@make -C ../kernel/modules
