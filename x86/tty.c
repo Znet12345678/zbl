@@ -46,6 +46,14 @@ void t_init(){
 }
 
 void t_putc(char c){
+//	vga_putc(c,y,x);
+//	if(c == '\n' || x == 80){
+//		y++;
+//		x=  0;
+//	}else
+//		x++;
+		
+//	return;
 	if(x == 80 || c == '\n'){
 		x = 0;
 		if(y == 24){

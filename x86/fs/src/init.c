@@ -91,7 +91,7 @@ int main(){
 		kprintf("KSH$");
 		gets(cmd);
 		if(!shell(cmd)){
-			kprintf("Failed to run command %s",cmd);
+			kprintf("Command did not complete succesfully",cmd);
 		}
 		kprintf("\n");
 	}

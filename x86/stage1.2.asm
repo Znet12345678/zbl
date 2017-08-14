@@ -102,7 +102,7 @@ goprotected:
 ;mov ax,3
 ;int 0x10
 mov ah,0
-mov al,2
+mov al,3
 int 0x10
 cli
 mov word [0x000],code

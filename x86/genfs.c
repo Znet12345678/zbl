@@ -396,6 +396,34 @@ int read_dev_hd(void *buf,int io,int slave,int bytes,uint16_t lba,int offset){
 		inw(io);
 	return bytes % 512;
 }
+int write(int fd,void *buf,int n){
+	if(fd < 0){
+		kprintf("Bad File Descriptor!\n");
+		return 00;
+	}
+	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+	if(strncmp(f->name,"/dev/",5) == 0){
+		dev_t dev = (dev_t)0x00A00000;
+		char *ident = malloc(3);
+		memcpy(ident,f->name + strlen(f->name) - 3,3);
+		while(strcmp(dev->ident,ident) != 0 && dev->alloc == 1)
+			dev+=sizeof(*dev);
+		if(!dev->alloc){
+			kprintf("Error finding device!\n");
+			return -1;
+		}
+		if(dev->type == 2){
+			uint8_t *u8buf = buf;
+			for(int i = 0; i < n;i++)
+				t_putc(u8buf[i]);
+		}else{
+			kprintf("Writing not suported on device %s\n",dev->ident);
+			return -1;
+		}
+		return n;
+	}
+	return 0;
+}
 int read(int fd,void *buf,int n){
 	//struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
 	if(fd < 0){
@@ -404,7 +432,7 @@ int read(int fd,void *buf,int n){
 	}
 //	kprintf("READ{%d,%s,%d}\n",fd,(uint8_t*)buf,n);
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
-	if(strncmp(f->name,"/dev",4) == 0){
+	if(strncmp(f->name,"/dev/",5) == 0){
 		dev_t dev = (dev_t)0x00A00000;
 		char *ident = malloc(3);
 		memcpy(ident,f->name + strlen(f->name) - 3,3);

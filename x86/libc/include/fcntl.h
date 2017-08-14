@@ -18,4 +18,5 @@
 //int open(const char *path, int flags);
 int read(int fd,void *buf,int n);
 int write(int fd,void *buf,int n);	
+int close(int fd);
 #endif

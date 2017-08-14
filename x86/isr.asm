@@ -19,6 +19,7 @@ extern free
 extern fsize
 extern exec_elf
 extern contains_symbol
+extern write
 align 4
 hwint:pushad
 cld
@@ -56,6 +57,8 @@ cmp ah,14
 jz _kexec
 cmp ah,15
 jz _contains_symbol 
+cmp ah,16
+jz _iwrite
 mov ebx,'E'
 push ebp
 mov ebp,esp
@@ -207,6 +210,19 @@ push ecx
 push ebx
 call contains_symbol
 mov [ebp-4],eax
+nop
+leave
+push eax
+call t_writevals
+pop eax
+iret
+_iwrite:push ebp
+mov ebp,esp
+push edx
+push ecx
+push ebx
+call write
+mov [ebp - 4],eax
 nop
 leave
 push eax

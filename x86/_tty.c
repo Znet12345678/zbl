@@ -55,6 +55,13 @@ void scroll(){
 }
 
 void t_putc(char c){
+	/*vga_putc(c,x,y);
+	if(c == '\n' || x == 80){
+		x = 0;
+		y++;
+	}else
+		x++;
+	return;*/
 	if(x == 80 || c == '\n'){
 		x = 0;
 		if(y == 24){

@@ -4,6 +4,7 @@
 #include "genfs.h"
 int *detect_drives();
 void hello_world();
+int vga_putc(int c,int x,int y);
 int load_elf_from_memory(uint8_t *pntr);
 void delay();
 struct __fdat *__parse_fdat(int lba,int offset);
