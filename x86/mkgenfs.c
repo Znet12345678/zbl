@@ -359,13 +359,22 @@ int write_file(const char *path,FILE *f,FILE *io){
 	fdat->alloc = 1;
 	fdat->ent_type = 4;
 	fdat->tlba = (bytes/512 + 1);
+	fdat->slba = _d->lba + 1;
 	uint8_t *b = malloc(1024);
 	f_read_master(io,b,_d->lba);
 	memcpy(b + _d->offset,fdat,sizeof(*fdat));
 	f_write_master(io,b,_d->lba);
 	int c;
-	while((c = getc(f)) != EOF)
+	int pos = 0;
+	uint32_t nlba = _d->lba + 1;
+	while((c = getc(f)) != EOF){
+		if(pos % 512 == 0){
+			fputc(1,io);
+			pos++;
+		}
 		fputc(c,io);
+		pos++;
+	}
 	return 1;
 	/*while(bytes > 0){
 		fdat->alloc = 1;

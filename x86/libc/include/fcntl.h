@@ -1,9 +1,9 @@
 #ifndef __FCNTL_H
 #define __FCNTL_H
-#define	O_RDONLY	0x0000		/* open for reading only */
-#define	O_WRONLY	0x0001		/* open for writing only */
-#define	O_RDWR		0x0002		/* open for reading and writing */
-#define	O_ACCMODE	0x0003		/* mask for above modes */
+#define	O_RDONLY	0x0001		/* open for reading only */
+#define	O_WRONLY	0x0002		/* open for writing only */
+#define	O_RDWR		0x0003		/* open for reading and writing */
+#define	O_ACCMODE	0x0004		/* mask for above modes */
 #define	F_DUPFD		0		/* duplicate file descriptor */
 #define	F_GETFD		1		/* get file descriptor flags */
 #define	F_SETFD		2		/* set file descriptor flags */

@@ -6,7 +6,7 @@ int *detect_drives();
 void hello_world();
 int vga_putc(int c,int x,int y);
 int load_elf_from_memory(uint8_t *pntr);
-void delay();
+void delay(uint16_t io);
 struct __fdat *__parse_fdat(int lba,int offset);
 void t_writevals();
 int elf_get_size(void *pntr);

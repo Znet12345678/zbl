@@ -399,7 +399,7 @@ int read_dev_hd(void *buf,int io,int slave,int bytes,uint16_t lba,int offset){
 int write(int fd,void *buf,int n){
 	if(fd < 0){
 		kprintf("Bad File Descriptor!\n");
-		return 00;
+		return 0;
 	}
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
 	if(strncmp(f->name,"/dev/",5) == 0){
@@ -422,7 +422,74 @@ int write(int fd,void *buf,int n){
 		}
 		return n;
 	}
+	if(!((f->flags >> 1)&1)){
+		return 0;
+	}
+	char **arr = sep(f->name,'/');
+	int last = 0;
+	while(arr[last] != 0)
+		last++;
+	char *prev = malloc(1024);
+	strcpy(prev,"/");
+	for(int i = 0; i < last - 1;i++){
+		strcat(prev,arr[i]);
+		strcat(prev,"/");
+	}
+	DIR *dir = opendir(prev);
+	struct __ent *ent = ___parse_ent(dir->dent->data_lba,dir->dent->data_offset);
+        int prev_lba = dir->dent->data_lba,prev_offset = dir->dent->data_offset;
+	while(ent->nxt_ent_lba > 0){
+		prev_lba = ent->nxt_ent_lba;
+		prev_offset = ent->nxt_ent_offset;
+		if(strcmp(ent->name,arr[last - 1]) == 0)
+			goto a;
+		ent = ___parse_ent(prev_lba,prev_offset);
+	}
+	struct __data *d = __find_free_blk();
+	ent->nxt_ent_lba = d->lba;
+	ent->nxt_ent_offset = d->offset;
+	uint8_t *pntr = malloc(1024);
+	_ata_read_master(pntr,prev_lba,0);
+	memcpy(pntr + prev_offset,ent,sizeof(*ent));
+	_ata_write_master(pntr,prev_lba);
+	ent = malloc(sizeof(*ent));
+	ent->alloc = 1;
+	ent->ent_type = 0;
+	ent->type = TYPE_FILE;
+	ent->namelen = strlen(arr[last - 1]);
+	for(int i = 0; i < sizeof(ent->name);i++)
+		ent->name[i] = 0;
+	strcpy(ent->name,arr[last - 1]);
+	ent->nxt_ent_lba = 0;
+	ent->nxt_ent_offset = 0;
+	ent->data_ent_lba = 0;
+	ent->data_ent_offset = 0;
+	pntr = malloc(1024);
+	_ata_read_master(pntr,d->lba,0);
+	memcpy(pntr + d->offset,ent,sizeof(*ent));
+	_ata_write_master(pntr,d->lba);
+	struct __data *d2 = __find_free_blk();
+	ent->data_ent_lba = d2->lba;
+	ent->data_ent_offset = d2->offset;
+	memcpy(pntr + d->offset,ent,sizeof(*ent));
+	_ata_write_master(pntr,d->lba);
+	struct __fdat *fdat = malloc(sizeof(*fdat));
+	fdat->alloc = 1;
+	fdat->ent_type = 4;
+	fdat->tlba = 0;
+	fdat->slba = 0;
+	uint8_t *fdpntr = malloc(1024);
+	_ata_read_master(fdpntr,d2->lba,0);
+	memcpy(fdpntr + d2->offset,fdat,sizeof(*fdat));
+	_ata_write_master(fdpntr,d2->lba);
+	uint8_t *_buf = malloc(512);
+	int mod = 0;
+	for(int i = 0; i < n;i++,mod++){
+		
+	}
 	return 0;
+	a:;
+
 }
 int read(int fd,void *buf,int n){
 	//struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
@@ -432,6 +499,8 @@ int read(int fd,void *buf,int n){
 	}
 //	kprintf("READ{%d,%s,%d}\n",fd,(uint8_t*)buf,n);
 	struct fd *f = (struct fd *)(0x00007E00 + fd * sizeof(*f));
+	if(!(f->flags & 1))
+		return 0;
 	if(strncmp(f->name,"/dev/",5) == 0){
 		dev_t dev = (dev_t)0x00A00000;
 		char *ident = malloc(3);
@@ -488,28 +557,27 @@ int read(int fd,void *buf,int n){
 	uint16_t pos_offset = f->pos_offset;
 	uint8_t flags = f->flags;
 //	kprintf("%d %d %d %d\n",pos_lba,pos_offset,kf->fent->data_ent_lba,kf->fent->data_ent_offset);
-	if((n) > (kf->fdat->tlba * 512 - pos_lba * 512 - pos_offset)){
+	if((n) > (kf->fdat->tlba * 511 - pos_lba * 511 - pos_offset)){
 		//kprintf("1\n");
 	//	kprintf("R:%d->%d\n",pos_lba + kf->fent->data_ent_lba,kf->fent->data_ent_lba + pos_lba + kf->fdat->tlba * 512);
-
-		int written = kf->fdat->tlba * 512 - pos_lba * 512 - pos_offset;
+		int written = kf->fdat->tlba * 511 - pos_lba * 511 - pos_offset;
 		if(written <= 0){
 			kprintf("Less than zero\n");
 			return 0;
 		}
 		uint8_t *tmp = malloc(1024);
-		for(int i = pos_lba + kf->fent->data_ent_lba,j = 0;i < kf->fent->data_ent_lba + pos_lba + (kf->fdat->tlba) * 512;j++,i++){
+		for(int i = pos_lba + kf->fdat->slba,j = 0;i < (kf->fdat->slba + pos_lba + (kf->fdat->tlba));j++,i++){
 //			if(i != pos_lba)
 //				_ata_read_master(buf + (j * 512),kf->fent->data_ent_lba + j + 1,0);
 //			else
 //				_ata_read_master(buf + (j * 512),kf->fent->data_ent_lba + j + 1,0);
-			ata_read_master(tmp,kf->fent->data_ent_lba +j + 1,0);
-			if(i != pos_lba)
-				memcpy(buf + j * 512,tmp,512);
+			_ata_read_master(tmp,kf->fdat->slba +j,0);
+			if(i != (pos_lba + kf->fent->data_ent_lba))
+				memcpy(buf + j * 511,tmp + 1,511);
 			else
-				memcpy(buf + j * 512,tmp + pos_offset,512 - pos_offset);
+				memcpy(buf + j * 511,tmp + pos_offset + 1,511 - pos_offset);
 		}
-		pos_lba+=kf->fdat->tlba * 512 - pos_lba;
+		pos_lba+=kf->fdat->tlba * 511 - pos_lba;
 		pos_offset = 0;
 		f->pos_lba = pos_lba;
 		f->pos_offset = pos_offset;
@@ -520,32 +588,32 @@ int read(int fd,void *buf,int n){
 	//	kprintf("R:%d:%d->%d:%d\n",pos_lba + kf->fent->data_ent_lba,pos_offset,kf->fent->data_ent_lba + pos_lba + n/512,0);
 		int bytestowrite = n;
 		int add;
-		if(n/512 == 0)
+		if(n/511 == 0)
 			add = 1;
 		else
-			add = n/512;
+			add = n/511;
 		for(int i = pos_lba + kf->fent->data_ent_lba,j = 0; i < (kf->fent->data_ent_lba + pos_lba + add);j++,i++){
-			_ata_read_master(tmp,kf->fent->data_ent_lba + j + 1,0);
+			_ata_read_master(tmp,kf->fdat->slba + j,0);
 			//kprintf("%d\n",bytestowrite);
 //			if(i != pos_lba)
 //				_ata_read_master(buf + (j * 512),j + pos_lba +kf->fent->data_ent_lba,0);
 //			else
 //				_ata_read_master(buf + (j * 512),j + pos_lba + kf->fent->data_ent_lba
-			if(bytestowrite < 512 && i != (kf->fent->data_ent_lba + pos_lba + n/512)){
-				memcpy(buf + j * 512,tmp,bytestowrite);
+			if(bytestowrite < 511 && i != (kf->fent->data_ent_lba + pos_lba + add)){
+				memcpy(buf + j * 511,tmp + 1,bytestowrite);
 				bytestowrite-=bytestowrite;
-			}else if (bytestowrite < 512){
-				memcpy(buf + j * 512,tmp + pos_offset,bytestowrite);
+			}else if (bytestowrite < 511){
+				memcpy(buf + j * 511,tmp  + pos_offset + 1,bytestowrite);
 				bytestowrite-=bytestowrite;
 			}
-			else if(i == pos_lba){
-				memcpy(buf + j * 512,tmp + pos_offset,512 - pos_offset);
-				bytestowrite-=512 - pos_offset;
+			else if(i == (pos_lba + kf->fent->data_ent_lba)){
+				memcpy(buf + j * 511,tmp + pos_offset + 1,511 - pos_offset);
+				bytestowrite-=511 - pos_offset;
 			}else
-				memcpy(buf + j * 512,tmp,512);
+				memcpy(buf + j * 511,tmp + 1,511);
 		}
-		pos_lba+=n/512;
-		pos_offset=n%512;
+		pos_lba+=n/511;
+		pos_offset=n%511;
 		f->pos_lba = pos_lba;
 		f->pos_offset = pos_offset;
 		return n;
@@ -633,7 +701,9 @@ int __exec(const char *path){
 	kprintf("Allocating %d bytes\n",_size);
 	uint8_t *buf = (uint8_t*)malloc(_size);
 	kprintf("Reading...\n");
-	read_file(path,buf);
+//	read_file(path,buf);
+	int fd = open(path,O_RDONLY,0);
+	read(fd,buf,fsize(path));
 	int size = elf_get_size(buf);
 	kprintf("Allocating %d bytes and Executing...\n",size);
 	//uint8_t *mem = (uint8_t*)0x100000;
@@ -642,7 +712,7 @@ int __exec(const char *path){
 	kprintf("Jumping\n");
 	t_writevals();
 	return main();
-}
+}	
 int exec(char *name,char **argv,char **env){
         int size = fsize(name);
         uint8_t *file = malloc(size);
@@ -655,7 +725,8 @@ int exec(char *name,char **argv,char **env){
 	int argc = 0;
 	while(argv[argc] != 0)
 		argc++;
-        return main(argc,argv);
+        int ret = main(argc,argv);
+	return ret;
 }
 
 int __find_free_blk_lba(){

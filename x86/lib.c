@@ -2,9 +2,8 @@
 #include "lib.h"
 void _error(){
 	int code;
-	asm("mov %%eax,%0" :"=m"(code));
-	kprintf("An error has occured!\n");
-	panic();
+	kprintf("Execution failed!\n");
+	while(1);
 }
 int dummy(char *path,int flags,int mode){
 	kprintf("%s %d %d\n",path,flags,mode);

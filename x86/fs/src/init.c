@@ -27,6 +27,7 @@ int shell(char *cmd){
 	int size = fsize(path);
 	if(!size)
 		return 0;
+	return exec(path,arr,0);
 	uint8_t *buf = malloc(size);
 	int fd = open(path,O_RDONLY,0);
 	int ret = read(fd,buf,size);

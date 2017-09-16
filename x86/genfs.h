@@ -4,9 +4,9 @@
 #define TYPE_DIR 0
 #define TYPE_FILE 1
 #define TYPE_DEV 2
-#define O_RDONLY 0x00
-#define O_WRONLY 0x01
-#define O_RDWRITE 0x02
+#define O_RDONLY 0x01
+#define O_WRONLY 0x02
+#define O_RDWRITE 0x03
 # define SEEK_SET       0       /* Seek from beginning of file.  */
 # define SEEK_CUR       1       /* Seek from current position.  */
 # define SEEK_END       2       /* Seek from end of file.  */
@@ -79,6 +79,7 @@ struct __fdat{
 	uint8_t alloc;
 	uint8_t ent_type;
 	uint32_t tlba;
+	uint32_t slba;
 };
 struct __finfo{
 	unsigned int pos_lba;

@@ -1,0 +1,14 @@
+symb _start
+mov ax,'a'
+mov ax,bx
+add bh,al
+mov eax,ebx
+call 0x8000
+push ebx
+pop eax
+symb _end
+mov eax,bx
+call func
+int 0x10
+call _start
+int 0x80

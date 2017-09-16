@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include "zexec.h"
+#include <math.h>
+#include <stdint.h>
+char **sep(const char *str,char c){
+	char **ret = (char**)malloc(1024);
+	int indx = 0;
+	for(int i = 0; i < strlen(str);i++){
+		if(str[i] == c){
+			indx++;
+			continue;
+		}
+		strcat(ret[indx],&str[i]);
+	}
+	return ret;
+}
+int contc(const char *str,char c){
+	int i = 0;
+	while(str[i] != c && str[i] != 0)
+		i++;
+	return i != strlen(str);
+}
+uint32_t intlen(uint32_t i){
+	uint32_t dup = i;
+	int len = 0;
+	while(dup > 0){
+		len++;
+		dup/=10;
+	}
+	return len;
+}
+int val(int c){
+	if(c >= '0' && c <= '9')
+		return c - '0';
+	else if(c >= 'A' && c <= 'F')
+		return c - 'A' + 10;
+	else if(c >= 'a' && c <= 'f')
+		return c - 'a' + 10;
+	return -1;
+}
+uint32_t parse_uint32(const char *raw){
+	uint32_t ret = 0;
+	if(raw[0] == '0' && raw[1] == 'x' || raw[strlen(raw) - 1] == 'h'){
+		char *buf = malloc(strlen(raw));
+		memcpy(buf,raw + 2,strlen(raw));
+		if(buf[strlen(buf) - 1] == 'h')
+			buf[strlen(buf) - 1] = 0;
+		int power = strlen(buf) - 1;
+		for(int i = 0; i < strlen(buf);i++){
+			if(val(buf[i]) == -1)
+				return 0;
+			ret+=(int)val(buf[i])*pow(16,power);
+			power--;
+		}
+	}else{
+		int power = strlen(raw) - 1;
+		for(int i = 0; i < strlen(raw);i++){
+			if(val(raw[i]) == -1)
+				return 0;
+			ret+=val(raw[i])*pow(10,power);
+			power--;
+		}
+	}
+	return ret;
+}
+int isNum(const char *str){
+	int ret = 1,i = 0,isHex = 0;
+	if(str[0] == '0' && str[1] == 'x' || str[strlen(str) - 1] == 'h') 
+		isHex = 1;
+	while(ret && i < strlen(str)){
+		ret = (str[i] >= '0' && str[i] <= '9') || (isHex && (str[i] >= '0' && str[i] <= '9') || (str[i] >= 'A' && str[i] <= 'F') || (str[i] >= 'a' && str[i] <= 'F'));
+		i++;
+	}
+	return ret;
+}
+int parse_op(const char *op){
+	if(strcmp(op,"eax,eax") == 0)
+		return 0xc0;
+	if(strcmp(op,"ebx,eax") == 0)
+		return 0xd8;
+	if(strcmp(op,"ecx,eax") == 0)
+	if(strcmp(op,"edx,eax") == 0)
+	if(strcmp(op,"eax,ebx") == 0)
+	if(strcmp(op,"ebx,ebx") == 0)
+	if(strcmp(op,"ecx,ebx") == 0)
+	if(strcmp(op,"edx,ebx") == 0)
+	if(strcmp(op,"eax,ecx") == 0)
+	if(strcmp(op,"ebx,ecx") == 0)
+	if(strcmp(op,"ecx,eax") == 0)
+	if(strcmp
+}
+int *assemble_line(const char *line){
+	char **arr = sep(line,' ');
+	char **arr2 = sep(arr[1],',');
+	int *ret = malloc(8*sizeof(int));
+	int nxt = 1;
+	if(strcmp(arr[0],"mov") == 0)
+		ret[0] = 0x89;
+	else if(strcmp(arr[0],"xor") == 0)
+		ret[0] = 0x31;
+	else if(strcmp(arr[0],"and") == 0)
+		ret[0] = 0x21;
+	else if(strcmp(arr[0],"movb") == 0){
+		if(arr2[0][0] == '[' && arr2[0][strlen(arr2[0]) - 1] == ']' && arr2[1][0] != '[' && arr2[1][strlen(arr2[1]) - 1] != ']'){
+			char *raw = malloc(1024);
+			memcpy(raw,arr2[0] + 1,strlen(arr2[0]) - 1);
+			uint32_t uint = parse_uint32(raw);
+			if(isNum(arr2[1])){
+				ret[0] = 0xc6;
+				ret[1] = 0x05;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				memcpy(ret + 6,arr2[1],strlen(arr2[1]));
+				return ret;
+			}else if(strcmp(arr2[1],"ah") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x25;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"al") == 0){
+				ret[0] = 0xa2;
+				memcpy(ret + 1,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"bh") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x3d;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"bl") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x1d;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"ch") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x2d;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"cl") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x0d;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"dh") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x35;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}else if(strcmp(arr2[1],"dl") == 0){
+				ret[0] = 0x88;
+				ret[1] = 0x35;
+				memcpy(ret + 2,&uint,sizeof(uint));
+				return ret;
+			}
+		}else if(arr2[1][0] == '[' && arr2[1][strlen(arr2[1]) - 1] == ']' && arr2[0][0] != '[' &&arr2[0][strlen(arr2[0]) - 1] != ']'){
+			char *raw = malloc(1024);
+			memcpy(raw,arr2[1] + 1,strlen(arr2[1]) - 1);
+			uint32_t uint = parse_uint32(raw);
+			memcpy(ret + nxt,&uint,sizeof(uint));
+			nxt+=4;
+			memcpy(ret + nxt,arr2[0],strlen(arr2[0]));
+			nxt+=strlen(arr2[0]);
+		}else{
+			printf("Invalid use of movb! No or too many memory references\n");
+			return 0;
+		}
+	}
+}

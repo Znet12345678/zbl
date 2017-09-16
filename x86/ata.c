@@ -5,9 +5,9 @@
 */
 #include <stdint.h>
 #include "lib.h"
-void delay(){
+void delay(uint16_t io){
 	for(int i = 0; i < 4;i++)
-		inb(0x1FC);
+		inb(io + 0x0C);
 }
 uint8_t send_ident_cmd(uint16_t io,uint8_t slave){
 	outb(io + 6,slave);
@@ -22,6 +22,9 @@ uint8_t send_ident_cmd(uint16_t io,uint8_t slave){
 		return status;
 	while(stat & 0x80)
 		stat = inb(io + 7);
+	if(stat & 0x01){
+		return 0;
+	}
 	stat = inb(io + 7);
 	uint8_t val = inb(io + 4);
 	//if(val != 0)
@@ -35,12 +38,13 @@ uint8_t send_ident_cmd(uint16_t io,uint8_t slave){
 		stat = inb(io + 7);
 	}
 	for(int i = 0; i < 256;i++)
-		inb(io);
+		inw(io);
 	return stat;
 }
 int *detect_drives(){
 	int *drives = malloc(1024);
 	print("Trying primary master...\n");
+	outb(0x1f6,0xa0);
 	uint8_t status = send_ident_cmd(0x1F0,0xA0);
 	if(status == 0)
 		drives[0] = 0;
@@ -49,6 +53,7 @@ int *detect_drives(){
 		drives[0] = 1;
 	}
 	print("Trying Primary slave\n");
+	outb(0x1F6,0xb0);
 	status = send_ident_cmd(0x1F0,0xB0);
 	if(status == 0)
 		drives[1] = 0;
@@ -57,6 +62,7 @@ int *detect_drives(){
 		drives[1] = 1;
 	}
 	print("Trying secondary master\n");
+	outb(0x176,0xb0);
 	status = send_ident_cmd(0x170,0xA0);
 	if(status == 0)
 		drives[2] = 0;
@@ -65,7 +71,8 @@ int *detect_drives(){
 		drives[2] = 1;
 	}
 	print("Trying secondary slave\n");
-	status = send_ident_cmd(0x170,0xA0);
+	outb(0x176,0xb0);
+	status = send_ident_cmd(0x170,0xB0);
 	if(status  == 0)
 		drives[3] = 0;
 	else{
@@ -109,7 +116,7 @@ int ide_wait_for_write(){
     return 0;
 }
 int ide_wait_for_read(uint16_t io){
-	int i = 0;
+	a:;int i = 0;
 	while(i < 4){
 		inb(io + 0x0C);
 		i++;
@@ -117,9 +124,9 @@ int ide_wait_for_read(uint16_t io){
 	uint8_t status;
 	while((status = inb(io + 0x07))&0x80);
 	status = inb(io + 0x07);
-	if(status & 0x01) return -1;
-	if(status & 0x20) return -1;
-	if(!(status & 0x08)) return -1;
+	if(status & 0x01) goto a;
+	if(status & 0x20) goto a;
+	if(!(status & 0x08)) goto a;
 	return 1;
 	/*
 	retry:;
@@ -297,7 +304,7 @@ int ata_read_master(uint8_t *buf,uint32_t lba,uint16_t drive){
 		*(uint16_t *)(buf + i * 2) = data;
 		i++;
 	}
-	delay();
+	delay(io);
 	return 1;
 }
 int _ata_read_master(uint8_t *pntr,uint32_t lba,int drive){
