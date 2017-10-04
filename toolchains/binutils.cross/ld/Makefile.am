@@ -350,6 +350,8 @@ ALL_EMULATION_SOURCES = \
 	ei386nto.c \
 	ei386nw.c \
 	ei386pe.c \
+	ei386zblpe.c \
+	ex86_64zblpe.c \
 	ei386pe_posix.c \
 	elnk960.c \
 	em32relf.c \
@@ -1335,8 +1337,15 @@ eelf32xtensa.c: $(srcdir)/emulparams/elf32xtensa.sh $(ELF_DEPS) \
 eelf_i386.c: $(srcdir)/emulparams/elf_i386.sh \
   $(ELF_X86_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 eelf_i386_zbl.c: $(srcdir)/emulparams/elf_i386_zbl.sh \
-	$(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
+	$(ELF_DEPS)  $(srcdir)/emultempl/pe.em $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS} 
 		${GENSCRIPTS} elf_i386_zbl "$(tdir_elf_i386_zbl)"
+ei386zblpe.c: $(srcdir)/emulparams/pe_i386_zblpe.sh \
+	$(srcdir)/scripttempl/pe.sc ${GEN_DEPENDS} 
+		${GENSCRIPTS} pe_i386_zblpe "$(tdir_pe_i386_zblpe)"
+ex86_64zblpe.c: $(srcdir)/emulparams/pe_i386_zblpe.sh \
+	$(srcdir)/scripttempl/pe.sc ${GEN_DEPENDS}
+	${GENSCRIPTS} pe_x86_64_zblpe "$(tdir_pe_x86_64_zblpe)"
+
 eelf_i386_be.c: $(srcdir)/emulparams/elf_i386_be.sh \
   $(ELF_DEPS) $(srcdir)/scripttempl/elf.sc ${GEN_DEPENDS}
 

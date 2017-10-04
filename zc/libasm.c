@@ -5,6 +5,10 @@
 #include <stdint.h>
 #include "libasm.h"
 #include <math.h>
+uint32_t jmpaddr(uint32_t addr){
+	return (addr - 4) | (addr - 4) >>  8|(addr - 4) >> 16 | (addr - 4) >> 24;
+
+}
 char **sep(const char *str,char c){
 	int i = 0,j = 0;
 	char **ret = malloc(4096);
@@ -32,15 +36,26 @@ uint16_t num(const char *str){
 	if(str[0] == '0' && str[1] == 'x'){
 		int exp = strlen(str)-3;
 		int ret = 0;
-		for(int i = 2;i < strlen(str);i++,exp--){ 	
-			ret+=(str[i]-'0') * (int)pow(16,exp);
+		for(int i = 2;i < strlen(str);i++,exp--){
+			if(str[i] >= '0' && str[i] <= '9') 	
+				ret+=(str[i]-'0') * (int)pow(16,exp);
+			else if(str[i] >= 'A' && str[i] <= 'B')
+				ret+=(str[i]-'A' + 10) * (int)pow(16,exp);
+			else if(str[i] >= 'a' && str[i] <= 'b')
+				ret+=(str[i]-'a' + 10) *(int)pow(16,exp);
 		}
 		return ret;
 	}if(str[strlen(str) - 1] == 'h'){
 		int exp = strlen(str)-2;
 		int ret = 0;
 		for(int i = 0; i < strlen(str)-1;i++,exp--){
-			ret+=(str[i]-'0') * (int)pow(16,exp);
+			if(str[i] >= '0' && str[i] <= '9')
+				ret+=(str[i]-'0') * (int)pow(16,exp);
+			else if(str[i] >= 'A' && str[i] <= 'B')
+                                ret+=(str[i]-'A' + 10) * (int)pow(16,exp);
+                        else if(str[i] >= 'a' && str[i] <= 'b')
+                                ret+=(str[i]-'a' + 10) *(int)pow(16,exp);
+
 		}
 		return ret;
 	}
@@ -164,7 +179,7 @@ uint8_t *assemble_line(const char *str){
 			ret[1] = genOP(0xb8,0,0);
 			uint16_t val = num(arr2[1]);
 			memcpy(ret + 2,&val,sizeof(uint16_t));
-			if(rsize(arr2[0])){
+			if(rsize(arr2[0]) == 2){
 				ret[5] = ret[4];
 				ret[4] = ret[3];
 				ret[3] = ret[2];
@@ -172,6 +187,10 @@ uint8_t *assemble_line(const char *str){
 				ret[1] = 0x66;
 			}
 			return ret;
+		}else if(strcmp(arr[0],"movb") == 0){
+			ret[1] = genOP(0xc6,0,0);
+			uint16_t val = num(arr2[1]);
+			memcpy(ret + 2,&val,sizeof(uint16_t));
 		}
 	}
 	if(strcmp(arr[0],"add") == 0)

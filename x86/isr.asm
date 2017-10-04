@@ -20,6 +20,8 @@ extern fsize
 extern exec_elf
 extern contains_symbol
 extern write
+extern loadPE
+extern gets
 align 4
 hwint:pushad
 cld
@@ -59,6 +61,10 @@ cmp ah,15
 jz _contains_symbol 
 cmp ah,16
 jz _iwrite
+cmp ah,17
+jz _loadPE
+cmp ah,18
+jz _gets
 mov ebx,'E'
 push ebp
 mov ebp,esp
@@ -228,4 +234,25 @@ leave
 push eax
 call t_writevals
 pop eax
+iret
+_loadPE:push ebp
+mov ebp,esp
+push ebx
+call loadPE
+mov [ebp - 12],eax
+nop
+leave
+push eax
+call t_writevals
+pop eax
+iret
+_gets:
+push ebp
+mov ebp,esp
+push ebx
+call gets
+
+nop
+leave
+call t_writevals
 iret

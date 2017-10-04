@@ -29,5 +29,6 @@ struct __zexec_symtab{
 	uint32_t vmem_addr;
 	uint32_t rawd_offset;
 	uint32_t phdr;
+	uint32_t size;
 };
 #endif

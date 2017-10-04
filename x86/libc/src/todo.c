@@ -49,11 +49,11 @@ void *bsearch(const void *key, const void *base,
 void *realloc(void *pntr,size_t s){
 	return malloc(s);
 }
-char *getenv(const char *name){
-	int i = 0;
-	char **env = (char**)0x502;
-	while(strcmp(env[i],name) != 0 && env[i] != 0)
-		i++;
-	return env[i];
-}
+//char *getenv(const char *name){
+//	int i = 0;
+//	char **env = (char**)0x502;
+//	while(strcmp(env[i],name) != 0 && env[i] != 0)
+//		i++;
+//	return env[i];
+//}
 

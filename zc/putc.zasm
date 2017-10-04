@@ -1,0 +1,4 @@
+symb _start
+mov ah,11
+mov ebx,'a'
+int 0x80

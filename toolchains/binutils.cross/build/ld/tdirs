@@ -1,0 +1,4 @@
+tdir_elf_i386_zbl=i386-zblpe
+tdir_elf_i386=i386-zblpe
+tdir_elf_x86_64_zbl=i386-zblpe
+tdir_elf_x86_64=i386-zblpe

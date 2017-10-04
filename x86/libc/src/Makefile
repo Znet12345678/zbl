@@ -3,7 +3,7 @@ str_LIBRARIES = libstr.a
 KERN_OBJS = objs/print.o objs/libelf.o objs/t_readvals.o objs/t_writevals.o objs/kprintf.o objs/t_putc.o objs/kexec.o objs/fsize.o
 kern_LIBRARIES = libkern.a
 CTYPE_OBJS = objs/isalnum.o objs/isalpha.o objs/iscntrl.o objs/isdigit.o objs/isgraph.o objs/islower.o objs/isupper.o objs/isprint.o objs/ispunct.o objs/isspace.o objs/isxdigit.o objs/tolower.o objs/toupper.o
-STDLIB_OBJS = objs/malloc.o objs/panic.o objs/abort.o objs/qsort.o objs/exec.o objs/open.o objs/read.o objs/atoi.o objs/close.o objs/write.o
+STDLIB_OBJS = objs/malloc.o objs/panic.o objs/env.o objs/abort.o objs/qsort.o objs/exec.o objs/open.o objs/read.o objs/atoi.o objs/close.o objs/write.o objs/sep.o objs/loadpe.o objs/gets.o
 ctype_LIBRARIES = libctype.a
 MAIN_OBJS = ${str_OBJS} ${kern_OBJS} ${ctype_OBJS}
 MATH_OBJS = objs/fact.o objs/sin.o objs/pow.o
@@ -64,6 +64,10 @@ all:
 	${CC} -c close.c -o objs/close.o ${CFLAGS}
 	${CC} -c qsort.c -o objs/qsort.o ${CFLAGS}
 	${CC} -c write.c -o objs/write.o ${CFLAGS}
+	${CC} -c sep.c -o objs/sep.o ${CFLAGS}
+	${CC} -c loadpe.c -o objs/loadpe.o ${CFLAGS}
+	${CC} -c gets.c -o objs/gets.o ${CFLAGS}
+	${CC} -c env.c -o objs/env.o ${CFLAGS}
 	${AR} rcs libstd.a ${STDLIB_OBJS}
 	${AR} rcs libc.a objs/crti.o objs/errno.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
 	${CC} -c pow.c -o objs/pow.o ${CFLAGS}

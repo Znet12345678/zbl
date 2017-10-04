@@ -23,4 +23,6 @@ void *bsearch(const void *key, const void *base,
                      size_t nmemb, size_t size,
                      int (*compar)(const void *, const void *));
 void *realloc(void *pntr,size_t s);
+char **sep(const char *str,int c);
+int *loadPE(uint8_t *pntr);
 #endif

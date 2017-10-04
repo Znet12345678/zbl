@@ -2,7 +2,7 @@
 #include "lib.h"
 void _error(){
 	int code;
-	kprintf("Execution failed!\n");
+	kprintf("\n_error()\n");
 	while(1);
 }
 int dummy(char *path,int flags,int mode){

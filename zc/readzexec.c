@@ -40,6 +40,7 @@ int main(int argc,char *argv[]){
 		printf("[Name of symbol] %s\n",symtab[i].symname);
 		printf("[Location to load in virtual memory] 0x%.8x\n", symtab[i].vmem_addr);
 		printf("[Location of binary code in the file] 0x%.8x\n",symtab[i].rawd_offset);
+		printf("[size of symbol] 0x%.8x\n",symtab[i].size);
 	}
 	fclose(f);
 	free(buf);

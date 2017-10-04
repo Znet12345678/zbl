@@ -1,1 +1,4 @@
-call 0x8765
+symb start
+mov eax,0xb800
+mov ax,0x8000
+movb eax,'a'

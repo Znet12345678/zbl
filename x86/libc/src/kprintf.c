@@ -109,7 +109,7 @@ void printf(const char *format,...){
 			float j = (float)va_arg(args,float);
 			int n = (int)j;
 			float j2 = j - n;
-			j2*=5;
+			j2*=10;
 			printf("%d.%d",j,j2);
 		}
 		else

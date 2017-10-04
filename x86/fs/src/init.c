@@ -86,6 +86,7 @@ int main(){
 	}
 	b:;kprintf("Entering Shell\n");
 	char *cmd = malloc(1024);
+	//kprintf("%f\n",1.02);
 	while(1){
 		for(int i = 0; i < 1024;i++)
 			cmd[i] = 0;

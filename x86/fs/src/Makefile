@@ -1,7 +1,7 @@
 CC=i386-elf-gcc
 CFLAGS=-nostdlib -ffreestanding -std=gnu99 -I../..
 ALTCFLAGS=-nostdlib -ffreestanding -std=gnu99
-LDFLAGS=-lk -L../.. -nostdlib -T../../linker.ld
+LDFLAGS=-lk -L../.. -nostdlib -T../../linker.ld -lgcc
 CRTBEGIN=$(shell $(CC) -print-file-name=crtbegin.o)
 CRTEND=$(shell $(CC) -print-file-name=crtend.o)
 LD=i386-elf-gcc
@@ -23,8 +23,10 @@ all:
 	${LD} -Tlinker.2.ld boot.o cat.o -o ../exec/cat.elf -L../.. -lk -nostdlib
 	${LD} -Tlinker.2.ld boot.o nlldr.o -o ../exec/nlldr.elf -L../.. -lk -nostdlib
 #	i386-zbl-gcc newlibtest.c -o ../exec/newlibtest.elf
-	i386-zbl-gcc  libctest.o -o ../exec/libctest.elf -L../libc/src -lc
-	i386-zbl-gcc  dev.o -o ../exec/dev.elf -lc
-	i386-zbl-gcc crash.o -o ../exec/crash.elf -lc
+	i386-zbl-gcc  libctest.o -o ../exec/libctest.elf -L../libc/src -lc -lgcc
+	i386-zbl-gcc  dev.o -o ../exec/dev.elf -lc -lgcc
+	i386-zbl-gcc crash.o -o ../exec/crash.elf -lc -lgcc
 	@make -C ../kernel/src
 	@make -C ../kernel/modules
+	${CC} -c pmdos.c -o pmdos.o ${CFLAGS}
+	${CC} -Tlinker.2.ld boot.o pmdos.o -o ../exec/pmdos.elf -L../.. -lk -nostdlib -lgcc
