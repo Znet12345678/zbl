@@ -1,0 +1,441 @@
+readelf.o: ../../binutils/readelf.c /usr/include/stdc-predef.h \
+ ../../binutils/sysdep.h ../../binutils/../include/alloca-conf.h config.h \
+ /usr/include/alloca.h /usr/include/features.h /usr/include/sys/cdefs.h \
+ /usr/include/bits/wordsize.h /usr/include/gnu/stubs.h \
+ /usr/include/gnu/stubs-64.h \
+ /usr/lib64/gcc/x86_64-suse-linux/4.8/include/stddef.h \
+ ../../binutils/../include/ansidecl.h /usr/include/stdio.h \
+ /usr/include/bits/types.h /usr/include/bits/typesizes.h \
+ /usr/include/libio.h /usr/include/_G_config.h /usr/include/wchar.h \
+ /usr/lib64/gcc/x86_64-suse-linux/4.8/include/stdarg.h \
+ /usr/include/bits/stdio_lim.h /usr/include/bits/sys_errlist.h \
+ /usr/include/bits/stdio.h /usr/include/sys/types.h /usr/include/time.h \
+ /usr/include/endian.h /usr/include/bits/endian.h \
+ /usr/include/bits/byteswap.h /usr/include/bits/byteswap-16.h \
+ /usr/include/sys/select.h /usr/include/bits/select.h \
+ /usr/include/bits/sigset.h /usr/include/bits/time.h \
+ /usr/include/sys/sysmacros.h /usr/include/bits/pthreadtypes.h \
+ ../bfd/bfdver.h ../../binutils/../include/fopen-same.h \
+ /usr/include/errno.h /usr/include/bits/errno.h \
+ /usr/include/linux/errno.h /usr/include/asm/errno.h \
+ /usr/include/asm-generic/errno.h /usr/include/asm-generic/errno-base.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/environments.h /usr/include/bits/confname.h \
+ ../../binutils/../include/getopt.h /usr/include/string.h \
+ /usr/include/xlocale.h /usr/include/bits/string.h \
+ /usr/include/bits/string2.h /usr/include/stdlib.h /usr/include/strings.h \
+ /usr/include/bits/waitflags.h /usr/include/bits/waitstatus.h \
+ /usr/include/bits/stdlib-bsearch.h /usr/include/bits/stdlib-float.h \
+ /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/bits/fcntl-linux.h /usr/include/bits/uio.h \
+ /usr/include/bits/stat.h /usr/include/sys/stat.h \
+ ../../binutils/../include/binary-io.h /usr/include/locale.h \
+ /usr/include/bits/locale.h /usr/include/libintl.h \
+ /usr/lib64/gcc/x86_64-suse-linux/4.8/include-fixed/limits.h \
+ /usr/lib64/gcc/x86_64-suse-linux/4.8/include-fixed/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ /usr/include/assert.h /usr/include/bits/timex.h \
+ ../../binutils/../zlib/zlib.h ../../binutils/../zlib/zconf.h \
+ /usr/include/bits/wchar.h ../bfd/bfd.h \
+ ../../binutils/../include/symcat.h ../../binutils/bucomm.h \
+ ../../binutils/elfcomm.h ../../binutils/../include/aout/ar.h \
+ ../../binutils/dwarf.h ../../binutils/../include/elf/common.h \
+ ../../binutils/../include/elf/external.h \
+ ../../binutils/../include/elf/internal.h \
+ ../../binutils/../include/elf/h8.h \
+ ../../binutils/../include/elf/reloc-macros.h \
+ ../../binutils/../include/elf/aarch64.h \
+ ../../binutils/../include/elf/alpha.h \
+ ../../binutils/../include/elf/arc.h \
+ ../../binutils/../include/elf/arc-reloc.def \
+ ../../binutils/../include/elf/arm.h ../../binutils/../include/elf/avr.h \
+ ../../binutils/../include/elf/bfin.h \
+ ../../binutils/../include/elf/cr16.h \
+ ../../binutils/../include/elf/cris.h ../../binutils/../include/elf/crx.h \
+ ../../binutils/../include/elf/d10v.h \
+ ../../binutils/../include/elf/d30v.h ../../binutils/../include/elf/dlx.h \
+ ../../binutils/../include/elf/epiphany.h \
+ ../../binutils/../include/elf/fr30.h ../../binutils/../include/elf/frv.h \
+ ../../binutils/../include/elf/ft32.h \
+ ../../binutils/../include/elf/hppa.h \
+ ../../binutils/../include/elf/i386.h \
+ ../../binutils/../include/elf/i370.h \
+ ../../binutils/../include/elf/i860.h \
+ ../../binutils/../include/elf/i960.h \
+ ../../binutils/../include/elf/ia64.h \
+ ../../binutils/../include/elf/ip2k.h \
+ ../../binutils/../include/elf/lm32.h \
+ ../../binutils/../include/elf/iq2000.h \
+ ../../binutils/../include/elf/m32c.h \
+ ../../binutils/../include/elf/m32r.h \
+ ../../binutils/../include/elf/m68k.h \
+ ../../binutils/../include/elf/m68hc11.h \
+ ../../binutils/../include/elf/mcore.h \
+ ../../binutils/../include/elf/mep.h \
+ ../../binutils/../include/elf/metag.h \
+ ../../binutils/../include/elf/microblaze.h \
+ ../../binutils/../include/elf/mips.h \
+ ../../binutils/../include/elf/riscv.h \
+ ../../binutils/../include/libiberty.h \
+ ../../binutils/../include/ansidecl.h \
+ ../../binutils/../include/elf/mmix.h \
+ ../../binutils/../include/elf/mn10200.h \
+ ../../binutils/../include/elf/mn10300.h \
+ ../../binutils/../include/elf/moxie.h ../../binutils/../include/elf/mt.h \
+ ../../binutils/../include/elf/msp430.h \
+ ../../binutils/../include/elf/nds32.h \
+ ../../binutils/../include/elf/nios2.h \
+ ../../binutils/../include/elf/or1k.h ../../binutils/../include/elf/pj.h \
+ ../../binutils/../include/elf/ppc.h \
+ ../../binutils/../include/elf/ppc64.h \
+ ../../binutils/../include/elf/rl78.h ../../binutils/../include/elf/rx.h \
+ ../../binutils/../include/elf/s390.h \
+ ../../binutils/../include/elf/score.h ../../binutils/../include/elf/sh.h \
+ ../../binutils/../include/elf/sparc.h \
+ ../../binutils/../include/elf/spu.h \
+ ../../binutils/../include/elf/tic6x.h \
+ ../../binutils/../include/elf/tic6x-attrs.h \
+ ../../binutils/../include/elf/tilegx.h \
+ ../../binutils/../include/elf/tilepro.h \
+ ../../binutils/../include/elf/v850.h ../../binutils/../include/elf/vax.h \
+ ../../binutils/../include/elf/visium.h \
+ ../../binutils/../include/elf/x86-64.h \
+ ../../binutils/../include/elf/xc16x.h \
+ ../../binutils/../include/elf/xgate.h \
+ ../../binutils/../include/elf/xstormy16.h \
+ ../../binutils/../include/elf/xtensa.h \
+ ../../binutils/../include/safe-ctype.h /usr/include/ctype.h \
+ ../../binutils/../include/filenames.h \
+ ../../binutils/../include/hashtab.h ../../binutils/unwind-ia64.h
+
+/usr/include/stdc-predef.h:
+
+../../binutils/sysdep.h:
+
+../../binutils/../include/alloca-conf.h:
+
+config.h:
+
+/usr/include/alloca.h:
+
+/usr/include/features.h:
+
+/usr/include/sys/cdefs.h:
+
+/usr/include/bits/wordsize.h:
+
+/usr/include/gnu/stubs.h:
+
+/usr/include/gnu/stubs-64.h:
+
+/usr/lib64/gcc/x86_64-suse-linux/4.8/include/stddef.h:
+
+../../binutils/../include/ansidecl.h:
+
+/usr/include/stdio.h:
+
+/usr/include/bits/types.h:
+
+/usr/include/bits/typesizes.h:
+
+/usr/include/libio.h:
+
+/usr/include/_G_config.h:
+
+/usr/include/wchar.h:
+
+/usr/lib64/gcc/x86_64-suse-linux/4.8/include/stdarg.h:
+
+/usr/include/bits/stdio_lim.h:
+
+/usr/include/bits/sys_errlist.h:
+
+/usr/include/bits/stdio.h:
+
+/usr/include/sys/types.h:
+
+/usr/include/time.h:
+
+/usr/include/endian.h:
+
+/usr/include/bits/endian.h:
+
+/usr/include/bits/byteswap.h:
+
+/usr/include/bits/byteswap-16.h:
+
+/usr/include/sys/select.h:
+
+/usr/include/bits/select.h:
+
+/usr/include/bits/sigset.h:
+
+/usr/include/bits/time.h:
+
+/usr/include/sys/sysmacros.h:
+
+/usr/include/bits/pthreadtypes.h:
+
+../bfd/bfdver.h:
+
+../../binutils/../include/fopen-same.h:
+
+/usr/include/errno.h:
+
+/usr/include/bits/errno.h:
+
+/usr/include/linux/errno.h:
+
+/usr/include/asm/errno.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/asm-generic/errno-base.h:
+
+/usr/include/unistd.h:
+
+/usr/include/bits/posix_opt.h:
+
+/usr/include/bits/environments.h:
+
+/usr/include/bits/confname.h:
+
+../../binutils/../include/getopt.h:
+
+/usr/include/string.h:
+
+/usr/include/xlocale.h:
+
+/usr/include/bits/string.h:
+
+/usr/include/bits/string2.h:
+
+/usr/include/stdlib.h:
+
+/usr/include/strings.h:
+
+/usr/include/bits/waitflags.h:
+
+/usr/include/bits/waitstatus.h:
+
+/usr/include/bits/stdlib-bsearch.h:
+
+/usr/include/bits/stdlib-float.h:
+
+/usr/include/fcntl.h:
+
+/usr/include/bits/fcntl.h:
+
+/usr/include/bits/fcntl-linux.h:
+
+/usr/include/bits/uio.h:
+
+/usr/include/bits/stat.h:
+
+/usr/include/sys/stat.h:
+
+../../binutils/../include/binary-io.h:
+
+/usr/include/locale.h:
+
+/usr/include/bits/locale.h:
+
+/usr/include/libintl.h:
+
+/usr/lib64/gcc/x86_64-suse-linux/4.8/include-fixed/limits.h:
+
+/usr/lib64/gcc/x86_64-suse-linux/4.8/include-fixed/syslimits.h:
+
+/usr/include/limits.h:
+
+/usr/include/bits/posix1_lim.h:
+
+/usr/include/bits/local_lim.h:
+
+/usr/include/linux/limits.h:
+
+/usr/include/bits/posix2_lim.h:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/assert.h:
+
+/usr/include/bits/timex.h:
+
+../../binutils/../zlib/zlib.h:
+
+../../binutils/../zlib/zconf.h:
+
+/usr/include/bits/wchar.h:
+
+../bfd/bfd.h:
+
+../../binutils/../include/symcat.h:
+
+../../binutils/bucomm.h:
+
+../../binutils/elfcomm.h:
+
+../../binutils/../include/aout/ar.h:
+
+../../binutils/dwarf.h:
+
+../../binutils/../include/elf/common.h:
+
+../../binutils/../include/elf/external.h:
+
+../../binutils/../include/elf/internal.h:
+
+../../binutils/../include/elf/h8.h:
+
+../../binutils/../include/elf/reloc-macros.h:
+
+../../binutils/../include/elf/aarch64.h:
+
+../../binutils/../include/elf/alpha.h:
+
+../../binutils/../include/elf/arc.h:
+
+../../binutils/../include/elf/arc-reloc.def:
+
+../../binutils/../include/elf/arm.h:
+
+../../binutils/../include/elf/avr.h:
+
+../../binutils/../include/elf/bfin.h:
+
+../../binutils/../include/elf/cr16.h:
+
+../../binutils/../include/elf/cris.h:
+
+../../binutils/../include/elf/crx.h:
+
+../../binutils/../include/elf/d10v.h:
+
+../../binutils/../include/elf/d30v.h:
+
+../../binutils/../include/elf/dlx.h:
+
+../../binutils/../include/elf/epiphany.h:
+
+../../binutils/../include/elf/fr30.h:
+
+../../binutils/../include/elf/frv.h:
+
+../../binutils/../include/elf/ft32.h:
+
+../../binutils/../include/elf/hppa.h:
+
+../../binutils/../include/elf/i386.h:
+
+../../binutils/../include/elf/i370.h:
+
+../../binutils/../include/elf/i860.h:
+
+../../binutils/../include/elf/i960.h:
+
+../../binutils/../include/elf/ia64.h:
+
+../../binutils/../include/elf/ip2k.h:
+
+../../binutils/../include/elf/lm32.h:
+
+../../binutils/../include/elf/iq2000.h:
+
+../../binutils/../include/elf/m32c.h:
+
+../../binutils/../include/elf/m32r.h:
+
+../../binutils/../include/elf/m68k.h:
+
+../../binutils/../include/elf/m68hc11.h:
+
+../../binutils/../include/elf/mcore.h:
+
+../../binutils/../include/elf/mep.h:
+
+../../binutils/../include/elf/metag.h:
+
+../../binutils/../include/elf/microblaze.h:
+
+../../binutils/../include/elf/mips.h:
+
+../../binutils/../include/elf/riscv.h:
+
+../../binutils/../include/libiberty.h:
+
+../../binutils/../include/ansidecl.h:
+
+../../binutils/../include/elf/mmix.h:
+
+../../binutils/../include/elf/mn10200.h:
+
+../../binutils/../include/elf/mn10300.h:
+
+../../binutils/../include/elf/moxie.h:
+
+../../binutils/../include/elf/mt.h:
+
+../../binutils/../include/elf/msp430.h:
+
+../../binutils/../include/elf/nds32.h:
+
+../../binutils/../include/elf/nios2.h:
+
+../../binutils/../include/elf/or1k.h:
+
+../../binutils/../include/elf/pj.h:
+
+../../binutils/../include/elf/ppc.h:
+
+../../binutils/../include/elf/ppc64.h:
+
+../../binutils/../include/elf/rl78.h:
+
+../../binutils/../include/elf/rx.h:
+
+../../binutils/../include/elf/s390.h:
+
+../../binutils/../include/elf/score.h:
+
+../../binutils/../include/elf/sh.h:
+
+../../binutils/../include/elf/sparc.h:
+
+../../binutils/../include/elf/spu.h:
+
+../../binutils/../include/elf/tic6x.h:
+
+../../binutils/../include/elf/tic6x-attrs.h:
+
+../../binutils/../include/elf/tilegx.h:
+
+../../binutils/../include/elf/tilepro.h:
+
+../../binutils/../include/elf/v850.h:
+
+../../binutils/../include/elf/vax.h:
+
+../../binutils/../include/elf/visium.h:
+
+../../binutils/../include/elf/x86-64.h:
+
+../../binutils/../include/elf/xc16x.h:
+
+../../binutils/../include/elf/xgate.h:
+
+../../binutils/../include/elf/xstormy16.h:
+
+../../binutils/../include/elf/xtensa.h:
+
+../../binutils/../include/safe-ctype.h:
+
+/usr/include/ctype.h:
+
+../../binutils/../include/filenames.h:
+
+../../binutils/../include/hashtab.h:
+
+../../binutils/unwind-ia64.h:

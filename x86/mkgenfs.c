@@ -1,3 +1,4 @@
+#ifdef OBSOLETE
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -465,3 +466,4 @@ int write_dirs(const char *name,FILE *f){
 	//fclose(f);
 	return 1;
 }
+#endif

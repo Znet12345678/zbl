@@ -1,6 +1,6 @@
 #include <lib.h>
 #include <mem.h>
-#include <genfs.h>
+#include <simpfs.h>
 #include "init.h"
 void _mem_init(){
         uint8_t *pntr = (uint8_t *)0x10000000;
@@ -29,7 +29,7 @@ int shell(char *cmd){
 		return 0;
 	return exec(path,arr,0);
 	uint8_t *buf = malloc(size);
-	int fd = open(path,O_RDONLY,0);
+	int fd = open(path,O_RDONLY);
 	int ret = read(fd,buf,size);
 //	int ret = read_file(path,buf);
 	if(!ret)
@@ -69,7 +69,7 @@ int main(){
 	kprintf("Reading init tasks\n");
 	char *path = malloc(1024);
 	strcpy(path,"/fs/init.tasks");
-	int fd = open("/fs/init.tasks");
+	int fd = open("/fs/init.tasks",O_RDONLY);
 	uint8_t *file = malloc(fsize(path));
 	int bytes = read(fd,file,fsize(path));
 	if(bytes <= 0)

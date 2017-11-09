@@ -1,7 +1,7 @@
 #ifndef __LIB_H
 #define __LIB_H
 #include <stdint.h>
-#include "genfs.h"
+#include "simpfs.h"
 int *detect_drives();
 void hello_world();
 int vga_putc(int c,int x,int y);

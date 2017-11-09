@@ -1,5 +1,6 @@
 #ifndef __LIBPE_H
 #define __LIBPE_H
+#include <stdint.h>
 struct PeHeader {
 	uint32_t mMagic; // PE\0\0 or 0x00004550
 	uint16_t mMachine;

@@ -4,6 +4,7 @@
 #include "fat.h"
 #include "genfs.h"
 #include "idt.h"
+#include "simpfs.h"
 void print(const char *str){
 	kprintf("%s",str);
 }
@@ -61,85 +62,47 @@ char *strcat(char *dest,const char *src){
 int main(){
 	mem_init();
 	t_readvals();
-//	for(int i = 0; i < 80;i++)
-//		memcpy(it + i*sizeof(zero),&zero,sizeof(zero));
-//	memcpy(it + 80 * sizeof(zero),&idt,sizeof(idt));
-//	for(int i = 81; i < 200;i++)
-//		memcpy(it + i * sizeof(zero),&zero,sizeof(zero));
-//	load_idt(it,0x1000);
-//	struct idt_descr *i80 = malloc(sizeof(*it)*200);
-	//struct idt_descr *idtt = malloc(sizeof(*idtt)*256);
-	//for(int i = 0; i < 100;i++)
-	//	idtt[i] = idt;
-	//load_idt(idtt,256 * sizeof(struct idt_descr) - 1);
-	//setup_idt();
+	int l = __prim_getlba() + 1;
+        kprintf("[KERNEL]Starting LBA:%d\n",l);
+        *(int*)0x501 = l;
+	char *memtest = malloc(1024);
+        strcpy(memtest,"Malloc doesn't work\n");
+        free(memtest);
+        char *mem = malloc(1024);
+        strcpy(mem,"Malloc works!\n");
+        kprintf("%s",mem);
+	kprintf("[KERNEL INIT]\n");
+	if(!isSimpfs()){
+		kprintf("Making simple filesystem\n");
+		mkfs();
+	}
+	mkdir("/test");
+	mkdir("/test2");
+	mkdir("/test/oi");
+	kprintf("[TMP_DONE]\n");
+	while(1);
 	kprintf("Generating devices...\n");
 	init_devs();	
-	char *memtest = malloc(1024);
-	strcpy(memtest,"Malloc doesn't work\n");
-	free(memtest);
-	char *mem = malloc(1024);
-	strcpy(mem,"Malloc works!\n");
-	kprintf("%s",mem);
 	//t_readvals();
 	debug("KERNEL","Kernel successfully loaded!");
-	int l = __prim_getlba() + 1;
-	kprintf("[KERNEL]Starting LBA:%d\n",l);
-	*(int*)0x501 = l;
-//	debug("GENFS","Starting");
-	if(!__is_genfs()){
-		char *str = malloc(80);
-		strcpy(str,"Hello World!\n");
-		kprintf("No file system detected\n");
-		__mkfs_genfs();
-		mkdir("/test");
-		mkdir("/test/test");
-	//	while(1);
-		write_file("/file",str,strlen(str));
-		//while(1);
-		mkdir("/test2");
-		//while(1);
-//		mkdir("/test/test/test");
-//		while(1);
-	}
-//	char *ls = malloc(fsize("/fs/src/ls.c"));
-//	read_file("/fs/src/ls.c",ls);
-//	kprintf("%s",ls);
 	char *init = malloc(1024);
 	strcpy(init,"/fs/init.elf");
 	char *isr = malloc(1024);
 	strcpy(isr,"/fs/kernel.ko");
 	uint8_t *pnt = malloc(fsize(isr));
-	int fd = open(isr,O_RDONLY,0);
+	int fd = open(isr,O_RDONLY);
 	read(fd,pnt,fsize(isr));
 	char *panic = malloc(1024);
 	strcpy(panic,"/fs/panic.ko");
 	uint8_t *_pnt = malloc(fsize(panic));
-	int pfd = open(panic,O_RDONLY,0);
+	int pfd = open(panic,O_RDONLY);
 	int n = read(pfd,_pnt,fsize(panic));
 	uint8_t *dest= (uint8_t*)0x00F00000;
 	int *bin = exec_elf(dest,pnt);
 	int *exe_poffset = exec_elf(dest,_pnt);
-//	goto *exe_poffset;
-	//bin();
-	//while(1);
 	struct Elf32_Hdr *hdr = (struct Elf32_Hdr *)pnt;
-	//memcpy(idt,&idtt,sizeof(idt)*256 - 1);
-	//memset(&idt,0,sizeof(idt)*256);
 	struct elf32_Phdr *phdr = (struct elf32_Phdr *)pnt + hdr->phdr_pos;
 	int start = phdr[0].p_paddr;
-	//int offset = 0x00F00000 + hdr->entry - start;
-//	c6 05 00 80 0b 00 78 eb  fe
-	/**(int*)0x800 = 0xc6;
-	*(int*)0x801 = 0x05;
-	*(int*)0x802 = 0;
-	*(int*)0x803 = 0x80;
-	*(int*)0x804 = 0x0b;
-	*(int*)0x805 = 0;
-	*(int*)0x806 = 0x78;
-	*(int*)0x807 = 0xeb;
-	*(int*)0x808 = 0xfe;*/
-//	__asm__("ljmp $8,%0" : : "r"(offset));
 	int offset = 0x00F00000;
 	int poffset = 0x05000000;
 	//int offset = *;
@@ -176,20 +139,13 @@ int main(){
 	//while(1);
 	__exec(init);
 	//opendir("/safas");
-	struct __superblock *sblk = __genfs_parse_superblock();
-	for(int i = 0; i < 4;i++)
-		kprintf("[%d] ",sblk->sig[i]);
-	kprintf("[%d] [%d]\n",sblk->root_dir_offset,sblk->root_dir_lba);
 	//write_file("/file",str,strlen(str));
 	//list("/");
 	//list("/fs");
-	list("/fs/exec");
-	list("/fs/src");
 	//list("/fs/users");
 //	list("/test/test");
 	//read_file("/fs/src/ls.c",buf);
 	//kprintf("%s\n",buf);
-	list("/fs");
 	__exec("/fs/init.elf");
 	debug("KERNEL","Done");
 	while(1);
@@ -197,8 +153,8 @@ int main(){
 		kprintf("No file system detected\n");
 		mkfs();
 	}
-	struct dirent *ent = parse_dirent("/");
-	kprintf("[alloc] %d [namelen] %d [name] %s [first_fent_lba] %d [first_fent_offset] %d [nxt_dirent_lba] %d [nxt_dirent_offset] %d [curr_ent_lba] %d [curr_ent_offset] %d\n",ent->alloc,ent->namelen,ent->name,ent->first_fent_lba,ent->first_fent_offset,ent->nxt_dirent_lba,ent->nxt_dirent_offset,ent->curr_ent_lba,ent->curr_ent_offset);
+//	struct dirent *ent = parse_dirent("/");
+//	kprintf("[alloc] %d [namelen] %d [name] %s [first_fent_lba] %d [first_fent_offset] %d [nxt_dirent_lba] %d [nxt_dirent_offset] %d [curr_ent_lba] %d [curr_ent_offset] %d\n",ent->alloc,ent->namelen,ent->name,ent->first_fent_lba,ent->first_fent_offset,ent->nxt_dirent_lba,ent->nxt_dirent_offset,ent->curr_ent_lba,ent->curr_ent_offset);
 	DIR *d = opendir("/");
 	mkdir("/test");
 //	opendir("/nonexistant");

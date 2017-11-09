@@ -125,6 +125,7 @@ int main(){
 			dest[j] = 0;
 		ata_read_master(dest,i,0);
 	}
+	kprintf("Done reading...\n");
 	uint8_t *mem = (uint8_t*)(0x01000000 + soffset);
 	uint8_t *pntr= (uint8_t*)0x00100000;
 	int (*main)();

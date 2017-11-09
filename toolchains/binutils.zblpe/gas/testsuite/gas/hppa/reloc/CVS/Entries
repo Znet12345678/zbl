@@ -1,0 +1,19 @@
+/applybug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/blebug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/blebug2.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/blebug3.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/exitbug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/fixupbug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/funcrelocbug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/labelopbug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/longcall.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/picreloc.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/plabelbug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/r_no_reloc.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/reduce.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/reduce2.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/reduce3.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/reloc.exp/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/roundmode.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+/selectorbug.s/1.1.1.1/Sat May 13 14:39:25 2017/-ko/
+D

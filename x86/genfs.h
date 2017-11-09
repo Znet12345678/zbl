@@ -1,3 +1,4 @@
+#ifdef OBSOLETE_KERNEL
 #ifndef __GENFS_H
 #define __GENFS_H
 #include <stdint.h>
@@ -116,5 +117,6 @@ int close(int fd);
 #endif
 #ifdef LINUX
 int write_dirs(const char *path,FILE *f);
+#endif
 #endif
 #endif

@@ -1,3 +1,7 @@
+/*
+*genFS Primitive File System Driver
+*(c)2016-2017 Zachary James Schlotman
+*/
 #include <stdint.h>
 #include "genfs.h"
 #include "lib.h"

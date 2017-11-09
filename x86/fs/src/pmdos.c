@@ -11,7 +11,7 @@ int shell(const char *cmd){
 	int argc = lst;
 	char *fname = malloc(1024);
 	char *pth = getenv("PATH");	
-	char **ptharr = sep(pth,";");
+	char **ptharr = sep(pth,';');
 	int pthlst = 0;
 	while(ptharr[pthlst] != 0)
 		pthlst++;

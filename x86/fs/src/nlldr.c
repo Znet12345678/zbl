@@ -1,3 +1,4 @@
+#ifdef OBSOLETE
 #include <lib.h>
 int main(int argc,char *argv[]){
 	t_readvals();
@@ -25,3 +26,4 @@ int main(int argc,char *argv[]){
         free(path);
         return func(argc,argv);
 }
+#endif

@@ -5,6 +5,7 @@ CRTEND=$(shell $(CC) -print-file-name=crtend.o)
 all:
 	rm -f libk.a
 	rm -f *.img
+	gcc readpe.c -o readpe
 	@make -C libc install
 #	make -C fs/src
 #	${CC} -c syscalls.c -o syscalls.o ${CFLAGS}
@@ -13,12 +14,13 @@ all:
 	nasm -f elf idt.asm -o idt.asm.o
 #	${CC} isr.o idt.asm.o -o fs/isr.ko -lk
 	cc pad.c -o pad
-	cc -c mkgenfs.c -o mkgenfs.o -I. -DLINUX -std=gnu99 -Werror
-	cc mkgenfs.o -o mkgenfs
+#	cc -c mkgenfs.c -o mkgenfs.o -I. -DLINUX -std=gnu99 -Werror
+#	cc mkgenfs.o -o mkgenfs
 	${CC} -c libelf.c -o libelf.o ${CFLAGS}
 	${CC} -c idt.c -o idt.o ${CFLAGS} -Werror
+	i386-elf-gcc -c simpfs.c -o simpfs.o ${CFLAGS} -fmax-errors=1
 	i386-elf-gcc -c libpe.c -o libpe.o ${CFLAGS}
-	i386-elf-gcc -c genfs.c -o genfs.o ${CFLAGS}
+#	i386-elf-gcc -c genfs.c -o genfs.o ${CFLAGS}
 	i386-elf-gcc -c libmem.c -o libmem.o ${CFLAGS} -Werror
 	i386-elf-gcc -c libzfs.c -o libzfs.o ${CFLAGS} -Werror -fmax-errors=1
 	i386-elf-gcc -c prim.c -o prim.o ${CFLAGS} -Werror
@@ -82,7 +84,7 @@ all:
 	nasm -f elf panic.asm -o panic.o
 	i386-elf-gcc -c env.c -o env.o -nostdlib -ffreestanding
 #	i386-elf-gcc -T panic.ld panic.o -o fs/panic.ko -nostdlib
-	i386-elf-gcc ${CFLAGS} -lgcc -Tlinker.ld crti.o crtn.o boot.o _tty.o vga.o idt.o lib.o fs.o ata.o kernel.o libelf.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o ${CRTBEGIN} ${CRTEND} libmem.o elf.o idt.asm.o isr.o dev.o libpe.o -o kernel.elf
+	i386-elf-gcc ${CFLAGS} -lgcc -Tlinker.ld crti.o crtn.o boot.o _tty.o vga.o idt.o lib.o fs.o ata.o kernel.o libelf.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o simpfs.o ${CRTBEGIN} ${CRTEND} libmem.o elf.o idt.asm.o isr.o dev.o libpe.o -o kernel.elf
 #	./genfsfromfile fs.img  dummy.2.bin stage2.2.bin msg.txt kernel.lfs.bin kernel.lfs.elf dummy.bin helloworld.elf dummy.3.elf kernel.elf
 	./genfsfromfile fs.img kernel.elf stage2.2.bin msg.txt
 	gcc genkernimg.c -o genkernimg -std=gnu99
@@ -96,11 +98,11 @@ all:
 	rm -f hd.img.1
 	./genkernimg bootloader.raw kernel.elf install.pre
 	i386-elf-gcc -c _tty.c -o _tty.qemu.o -DQEMU_BUILD ${CFLAGS}
-	i386-elf-gcc crti.o crtn.o elf.o isr.o boot.o genfs.o dev.o vga.o _tty.qemu.o lib.o fs.o ata.o kernel.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o  ${CRTBEGIN} ${CRTEND} libzfs.o libmem.o libelf.o idt.o idt.asm.o libpe.o -o kernel.elf.qemu  -lgcc ${CFLAGS} -T linker.ld
+	i386-elf-gcc crti.o crtn.o elf.o isr.o boot.o simpfs.o dev.o vga.o _tty.qemu.o lib.o fs.o ata.o kernel.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o  ${CRTBEGIN} ${CRTEND} libzfs.o libmem.o libelf.o idt.o idt.asm.o libpe.o -o kernel.elf.qemu  -lgcc ${CFLAGS} -T linker.ld
 	@qemu-img create install.img.1 100M
 	@echo "Compiling and archiving libk.a"
 	@i386-elf-gcc -c libk.c -o libk.o ${CFLAGS}
-	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} idt.asm.o crti.o isr.o dev.o vga.o crtn.o libk.o idt.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o genfs.o fs.o libmem.o libelf.o libpe.o env.o
+	@ar rcs libk.a ${CRTBEGIN} ${CRTEND} idt.asm.o crti.o isr.o dev.o vga.o crtn.o libk.o idt.o libmem.o _tty.o lib.o fs.o ata.o kprintf.o io.o str.o libk/fs.o libk/str.o libk/err.o libk/io.o prim.o libzfs.o fat.o simpfs.o fs.o libmem.o libelf.o libpe.o env.o
 #	make -C fs/src
 	i386-elf-gcc -T panic.ld panic.o -o fs/panic.ko -nostdlib -lk -L.
 	${CC} -Tlinker.isr.ld isr.o -o fs/kernel.ko -lk -L. -nostdlib
@@ -111,10 +113,10 @@ all:
 	gcc gentasklist.c -o gentasklist -std=gnu99
 	./gentasklist fs/init.tasks /fs/kernel/setupdev.kt 
 	@make -C libc.dos
-	i686-w64-mingw32-gcc -c petest.c -o petest.o -ffreestanding
-	i686-w64-mingw32-gcc petest.o -o petest.exe -nostdlib -ffreestanding -Ilibc.dos/include -Llibc.dos/src -lgcc -lc
+	i686-w64-mingw32-gcc -c petest.c -o petest.o -ffreestanding -nostdlib
+	i686-w64-mingw32-ld petest.o -o petest.exe -nostdlib  -Llibc.dos/src -ldosc 
 	cp petest.exe fs/dos 
-	./mkgenfs fs install.img.1
+#	./mkgenfs fs install.img.1
 #	dd if=/dev/zero of=install.img.1 bs=1M count=100
 	./pad install.pre pad.bin
 	cat install.pre pad.bin install.img.1 > install.img.up

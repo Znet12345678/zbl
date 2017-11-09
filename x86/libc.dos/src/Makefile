@@ -66,7 +66,7 @@ all:
 	${CC} -c write.c -o objs/write.o ${CFLAGS}
 	${CC} -c sep.c -o objs/sep.o ${CFLAGS}
 	${AR} rcs libstd.a ${STDLIB_OBJS}
-	${AR} rcs libc.a objs/crti.o objs/errno.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
+	${AR} rcs libdosc.a objs/crti.o objs/errno.o ${KERN_OBJS} ${STR_OBJS} ${CTYPE_OBJS} ${STDLIB_OBJS} objs/crtn.o
 	${CC} -c pow.c -o objs/pow.o ${CFLAGS}
 	${CC} -c fact.c -o objs/fact.o ${CFLAGS}
 	${CC} -c sin.c -o objs/sin.o ${CFLAGS}

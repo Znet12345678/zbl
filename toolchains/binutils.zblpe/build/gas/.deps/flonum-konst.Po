@@ -1,0 +1,10 @@
+flonum-konst.o: ../../gas/flonum-konst.c /usr/include/stdc-predef.h \
+ ../../gas/../include/ansidecl.h ../../gas/flonum.h ../../gas/bignum.h
+
+/usr/include/stdc-predef.h:
+
+../../gas/../include/ansidecl.h:
+
+../../gas/flonum.h:
+
+../../gas/bignum.h:

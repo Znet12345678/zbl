@@ -1,0 +1,67 @@
+/COPYING/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/COPYING3/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/ChangeLog/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/ChangeLog-0415/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/ChangeLog-2016/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/ChangeLog-9103/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/MAINTAINERS/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/alloca-conf.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/ansidecl.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/bfdlink.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/binary-io.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/bout.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/demangle.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/dis-asm.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/dwarf2.def/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/dwarf2.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/dyn-string.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/environ.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/fibheap.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/filenames.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/floatformat.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/fnmatch.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/fopen-bin.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/fopen-same.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/fopen-vms.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/gcc-c-fe.def/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/gcc-c-interface.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/gcc-interface.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/getopt.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/hashtab.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/hp-symtab.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/ieee.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/leb128.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/libiberty.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/longlong.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/lto-symtab.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/md5.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/oasys.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/objalloc.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/obstack.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/os9k.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/partition.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/plugin-api.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/progress.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/safe-ctype.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/sha1.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/simple-object.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/sort.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/splay-tree.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/symcat.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/timeval-utils.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/vtv-change-permission.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/xregex.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/xregex2.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/xtensa-config.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/xtensa-isa-internal.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+/xtensa-isa.h/1.1.1.1/Sat May 13 14:39:24 2017/-ko/
+D/aout////
+D/cgen////
+D/coff////
+D/elf////
+D/gdb////
+D/mach-o////
+D/nlm////
+D/opcode////
+D/som////
+D/vms////

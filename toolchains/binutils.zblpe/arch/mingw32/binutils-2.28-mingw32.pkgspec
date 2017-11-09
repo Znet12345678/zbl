@@ -1,0 +1,121 @@
+# binutils-2.28-mingw32.pkgspec -- vim: filetype=sh
+#
+# Package name and version must be explicitly specified; these appear
+# as the initial part of the package name, as interpreted by mingw-get.
+#
+pkgname 	binutils
+pkgversion	2.28
+
+# Contributed by Keith Marshall <keithmarshall@users.sourceforge.net>
+# Copyright (C) 2017, MinGW.org Project
+#
+# -----------------------------------------------------------------------------
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+#
+# -----------------------------------------------------------------------------
+
+# A release identifier is optional; if specified, it will be appended
+# to the package name and version, delimited by an intervening hyphen.
+#
+pkgrelease 	1
+
+# A system architecture identifier is required for any package which
+# is to be delivered by mingw-get; it establishes the sub-system type
+# identifier which will appear within the package name, following the
+# package name, version and release identifiers.
+#
+arch		mingw32
+
+# The pkgtype specification determines the packaging method to be used
+# for all distributable component packages, and the final extension to
+# be appended to the component package names.  The default is tar.gz;
+# alternatives supported by mingw-get are tar.bz2, tar.lzma and tar.xz
+#
+pkgtype 	tar.xz
+
+# Optional alias, title, and description specifications may be provided;
+# these are used by 'mingw-pkg mkxml', to specify the associated entries
+# in mingw-get's xml catalogue specification for this package.
+#
+# Each of these should be specified only once; 'aliases' is permitted as
+# a synonym for 'alias', where the associated value is a space separated
+# list of multiple alias names.
+#
+alias		binutils
+title		"Short description for mingw-get package list"
+description	"
+Long form description for package, as is to be emitted when
+running 'mingw-get show ... binutils ...'; this is typically
+specified as a multi-line quoted string.  A blank line causes
+a paragraph break; thus ...
+
+This will appear as a separate paragraph, in the description
+emitted by mingw-get.
+
+Take care that the final line of the specified description
+ends with a quote character to match the opening quote used
+to introduce the argument; (it is a double quote here)"
+
+# An affiliate specification is also optional; it identifies a package
+# category with which mingw-get will affiliate this package.  Unlike
+# the alias, title, and description specifications, multiple affiliate
+# specifications are permitted, allowing for affiliation of the package
+# with multiple mingw-get categories.
+#
+affiliate	"MinGW Base System"
+
+# Package build configuration options:
+#
+option		configure --prefix=/mingw --disable-rpath
+option		configure --enable-nls --enable-lto --enable-gold
+option		configure --enable-libssp --enable-install-libbfd
+option		configure --enable-shared --enable-static
+option		configure --enable-install-libiberty
+
+# The distributable package inventory is established by means of a
+# collection of component specifications; each is of the form:
+#
+#   component  keyword  "content"
+#
+#   where:
+#     keyword	specifies the component package class name, as it
+#		will be included in the mingw-get compatible package
+#		archive name, immediately preceding the pkgtype.
+#     content	specifies a white-space separated list of directory
+#		and/or file path names, relative to the top of the
+#		staging directory tree in which the distribution is
+#		prepared, which are to be passed as argument list
+#		to the archiving program, so defining the content
+#		for the associated component package.
+#
+component	bin	"bin mingw32"
+component	dev	"include lib --exclude=libiberty* --exclude=*.la"
+component	lang	"share/locale"
+component	lic	"$PACKAGE-$VERSION/arch/mingw32/LICENSE
+			 $PACKAGE-$VERSION/COPYING3 --transform=s,COPYING3,GPLv3,
+			 $PACKAGE-$VERSION/COPYING --transform=s,COPYING,GPLv2,
+			 --transform=s,.*/,share/doc/$PACKAGE/$VERSION/,"
+component	info	"share/info --exclude=dir"
+component	man	"share/man"
+
+subpackage	libiberty
+component	dev	"include/libiberty lib/libiberty*"
+#
+# binutils-2.28-mingw32.pkgspec: end of file
