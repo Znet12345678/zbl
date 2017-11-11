@@ -209,24 +209,26 @@ DIR *opendir(const char *name){
 	struct tree_ent *ent = malloc(512);
 	uint8_t *buf = malloc(1024);
 	_ata_read_master(buf,0,0);
-	memcpy(ent,buf + 5,sizeof(ent));
+	memcpy(ent,buf + 5,sizeof(*ent));
 	struct tree_dirhdr *dhdr = malloc(512);
        	int i = 0;
 	int prevlba = 0;
 	struct tree_filehdr *fhdr = malloc(sizeof(*fhdr));
 	while(s[i] != 0){
-                _ata_read_master(ent,ent->currLba,0);
-                while(ent->alloc){
+                _ata_read_master(buf,ent->currLba,0);
+               	memcpy(ent,buf,sizeof(*ent));
+		while(ent->alloc){
                         if(ent->type == __TYPE_DIR){
-                                memcpy(fhdr,ent + sizeof(*ent),sizeof(*fhdr));
+                                memcpy(fhdr,buf + sizeof(*ent),sizeof(*fhdr));
                                 if(strcmp(fhdr->name,s[i]) == 0){
                                         prevlba = ent->currLba;
                                         _ata_read_master(ent,dhdr->nxtTreeLba,0);
                                         break;
                                 }
                         }
-                        _ata_read_master(ent,ent->nxtLba,0);
-                }
+                        _ata_read_master(buf,ent->nxtLba,0);
+			memcpy(ent,buf,sizeof(*ent)); 
+               }
                 if(!ent->alloc)
                         return 0;
                 i++;
