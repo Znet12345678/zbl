@@ -111,8 +111,8 @@ int mkfs(){
 	struct tree_ent *head = malloc(512);
 	head->alloc = 1;
 	head->type = __TYPE_DIR;
-	head->nxtLba = 0;
-	head->currLba = 1;
+	head->nxtLba = 1;
+	head->currLba = 0;
 	memcpy(buf + 5,head,sizeof(*head));
 	_ata_write_master(buf,0);
 	mkdir("/");
@@ -127,22 +127,24 @@ int mkdir(const char *name){
 	uint8_t *buf = malloc(512);
 	struct tree_ent *ent = malloc(512);
 	_ata_read_master(buf,0,0);
-	memcpy(ent,buf + 5,sizeof(*ent) + sizeof(struct tree_filehdr));
-	int prevLba = ent->currLba;
+	memcpy(ent,buf + 5,512-5);
+	int prevLba = ent->nxtLba;
 	struct tree_dirhdr *dhdr = malloc(512);
 	while(s[i+1] != 0){
-		_ata_read_master(ent,ent->currLba,0);
+		_ata_read_master(buf,ent->nxtLba,0);
+		memcpy(ent,buf,sizeof(*ent));
 		while(ent->alloc){
 			if(ent->type == __TYPE_DIR){
 				struct tree_filehdr *fhdr = malloc(sizeof(*fhdr));
-				memcpy(fhdr,ent + sizeof(*ent),sizeof(*fhdr));
+				memcpy(fhdr,buf + sizeof(*ent),sizeof(*fhdr));
 				if(strcmp(fhdr->name,s[i]) == 0){
-					prevLba = ent->currLba;
+					prevLba = ent->nxtLba;
 					_ata_read_master(ent,dhdr->nxtTreeLba,0);
 					break;
 				}
 			}
-			_ata_read_master(ent,ent->nxtLba,0);
+			_ata_read_master(buf,ent->nxtLba,0);
+			memcpy(ent,buf,sizeof(*ent));
 		}
 		if(!ent->alloc)
 			return 0;
@@ -155,12 +157,13 @@ int mkdir(const char *name){
 	}
 	while(ent->nxtLba != 0){
 		prevLba = ent->nxtLba;
-		struct tree_filehdr *fhdr = ent + sizeof(*ent);
-		if(strcmp(fhdr->name,s[i]) == 0){
+		struct tree_filehdr *fhdr = buf + sizeof(*ent);
+		if(strcmp(fhdr->name,s[i]) == 0 && strlen(s[i]) > 0){
 			kprintf("Error: Directory exists!\n");
 			return 0;
 		}
-		_ata_read_master(ent,ent->nxtLba,0);
+		_ata_read_master(buf,ent->nxtLba,0);
+		memcpy(ent,buf,sizeof(*ent));
 	}
 	ent->nxtLba = find_free();
 	_ata_write_master(ent,prevLba);
@@ -186,12 +189,12 @@ int mkdir(const char *name){
 	buf = malloc(512);
 	uint32_t lba = find_free();
 	memcpy(buf,ent,sizeof(*ent));
-	_ata_write_master(ent,find_free());
+	_ata_write_master(buf,find_free());
 	ent->nxtLba = find_free();
 	memcpy(buf,ent,sizeof(*ent));
 	memcpy(buf + sizeof(*ent),fhdr,sizeof(*fhdr));
 	memcpy(buf + sizeof(*ent) + sizeof(*fhdr),dhdr,sizeof(*dhdr));
-	_ata_write_master(ent,lba);
+	_ata_write_master(buf,lba);
 	dhdr->nxtTreeLba = find_free();
 	memcpy(buf + sizeof(*ent) + sizeof(*fhdr),dhdr,sizeof(*dhdr));
 	_ata_write_master(buf,lba);
