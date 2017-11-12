@@ -112,7 +112,6 @@ int mkfs(){
 	head->alloc = 1;
 	head->type = __TYPE_DIR;
 	head->nxtLba = 1;
-	head->currLba = 0;
 	memcpy(buf + 5,head,sizeof(*head));
 	_ata_write_master(buf,0);
 	mkdir("/");
@@ -172,7 +171,6 @@ int mkdir(const char *name){
 	ent->alloc = 1;
 	ent->type = __TYPE_DIR;
 	ent->nxtLba = 0;
-	ent->currLba = 0;
 	free(dhdr);
 	dhdr = malloc(sizeof(*dhdr));
 	struct tree_filehdr *fhdr = malloc(1024);
@@ -205,7 +203,7 @@ int mkdir(const char *name){
 *Returns DIR pointer that holds all the info currently needed for I/O on directories or 0 on error
 */
 DIR *opendir(const char *name){
-	char *s = sep(name,'/');
+	char **s = sep(name,'/');
 	struct tree_ent *ent = malloc(512);
 	uint8_t *buf = malloc(1024);
 	_ata_read_master(buf,0,0);
@@ -215,13 +213,13 @@ DIR *opendir(const char *name){
 	int prevlba = 0;
 	struct tree_filehdr *fhdr = malloc(sizeof(*fhdr));
 	while(s[i] != 0){
-                _ata_read_master(buf,ent->currLba,0);
+                _ata_read_master(buf,ent->nxtLba,0);
                	memcpy(ent,buf,sizeof(*ent));
 		while(ent->alloc){
                         if(ent->type == __TYPE_DIR){
                                 memcpy(fhdr,buf + sizeof(*ent),sizeof(*fhdr));
                                 if(strcmp(fhdr->name,s[i]) == 0){
-                                        prevlba = ent->currLba;
+                                        prevlba = ent->nxtLba;
                                         _ata_read_master(ent,dhdr->nxtTreeLba,0);
                                         break;
                                 }
@@ -282,7 +280,7 @@ int read(int fd,void *pntr,int n){
 			return 0;
 		i = 0;
 		uint8_t *buf = malloc(512);
-		lba = ent->currLba;
+		lba = ent->nxtLba;
 		uint32_t offset = 0;
 		/*
 		*This loop makes it so that we start at the correct lba and offset

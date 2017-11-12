@@ -6,6 +6,8 @@ all:
 	rm -f libk.a
 	rm -f *.img
 	gcc readpe.c -o readpe
+	gcc -c transcribe.c -o transcribe.o -DBUILD_HOST
+	gcc transcribe.o writehd.c -o writehd -DBUILD_HOST
 	@make -C libc install
 #	make -C fs/src
 #	${CC} -c syscalls.c -o syscalls.o ${CFLAGS}
