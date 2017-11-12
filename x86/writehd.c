@@ -9,7 +9,8 @@
 int recurse_write(char *in,char *name){
 	FILE *f = fopen(name,"r+b");
 	if(!f){
-		perror("Couldn't open file");
+		fprintf(stderr,"%s:",name);
+		perror("[0]Couldn't open file");
 		return -1;
 	}
 	DIR *d = opendir(in);
@@ -29,7 +30,8 @@ int recurse_write(char *in,char *name){
 			fclose(f);
 			f = fopen(name,"r+b");
 			if(!f){
-				perror("Couldn't open file");
+				fprintf(stderr,"%s:",name);
+				perror("[1]Couldn't open file");
 				return -1;
 			}
 			printf("%s %d\n",path,val);
@@ -49,7 +51,7 @@ int recurse_write(char *in,char *name){
                                 continue;
                         char *path = malloc(1024);
                         sprintf(path,"%s/%s",in,ent->d_name);
-			recurse_write(path,f);
+			recurse_write(path,name);
 		}
 	}
 	closedir(d);
@@ -64,10 +66,13 @@ int main(int argc,char **argv){
 	mkfs(f);
 	fclose(f);
 	f = fopen(argv[2],"r+b");
+	__mkdir("/",f);
+	fclose(f);
+	f = fopen(argv[2],"r+b");
 	char *path = malloc(1024);
 	sprintf(path,"/%s",argv[1]);
 	__mkdir(path,f);
 	fclose(f); 
-	int ret = 0; //recurse_write(argv[1],argv[2]) ? 0 : -1;
+	int ret = recurse_write(argv[1],argv[2]) ? 0 : -1;
 	return ret;
 }

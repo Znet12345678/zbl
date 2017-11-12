@@ -11,14 +11,14 @@ uint32_t find_free(FILE *f){
         uint8_t *buf = malloc(512);
         int r = _ata_read_master(buf,ret,f);
     	if(r < 512)
-		return ++ret;
+		return ret;
 	while(buf[0]){
                 ret++;
 		free(buf);
 		buf = malloc(512);
                 r = _ata_read_master(buf,ret,f);
 		if(r < 512)
-			return ++ret;
+			return ret;
         }
         return ret;
 }
@@ -37,22 +37,27 @@ int mkfs(FILE *f){
         head->nxtLba = 1;
         memcpy(buf + 5,head,sizeof(*head));
         _ata_write_master(buf,0,f);
-        __mkdir("/",f);
+
 }
 
 int _ata_read_master(void *buf,int lba,FILE * f){
 	fseek(f,lba * 512,SEEK_SET);
 	int r = fread(buf,sizeof(uint8_t),512,f);
+	if(r == 0)
+		bzero(buf,512);
 	return r;
 }
 int _ata_write_master(void *buf,int lba,FILE * f){
 	fseek(f,lba*512,SEEK_SET);
 	int r = fwrite(buf,sizeof(uint8_t),512,f);
+
 	return r;
 }
 char **sep(const char *str,int c){
         int i = 0,k = 0,l = 0;
         char **ret = (char**)malloc(102400);
+	bzero(ret,102400);
+	
         while(str[i] != 0){
                 while(str[i] == c)
                         i++;
@@ -65,7 +70,6 @@ char **sep(const char *str,int c){
                 l++;
                 k = 0;
         }
-        ret[l] = (char*)0;
         return ret;
 }
 struct __DIR *__opendir(const char *name,FILE *f){
@@ -140,6 +144,7 @@ int __mkdir(const char *name,FILE *f){
                 printf("Error: Directory exists!\n");
                 return 0;
         }
+	printf("%d\n",ent->nxtLba);
         while(ent->nxtLba != 0){
                 prevLba = ent->nxtLba;
                 struct tree_filehdr *fhdr = buf + sizeof(*ent);
@@ -173,6 +178,7 @@ int __mkdir(const char *name,FILE *f){
         }
         dhdr->nxtTreeLba = 0;
         buf = malloc(512);
+	bzero(buf,512);
         uint32_t lba = find_free(f);
         memcpy(buf,ent,sizeof(*ent));
         _ata_write_master(buf,find_free(f),f);
@@ -184,5 +190,6 @@ int __mkdir(const char *name,FILE *f){
         dhdr->nxtTreeLba = find_free(f);
         memcpy(buf + sizeof(*ent) + sizeof(*fhdr),dhdr,sizeof(*dhdr));
         _ata_write_master(buf,lba,f);
+	printf("WRITE:%s\n",name);
         return 1;
 }
