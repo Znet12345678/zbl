@@ -136,9 +136,10 @@ int mkdir(const char *name){
 			if(ent->type == __TYPE_DIR){
 				struct tree_filehdr *fhdr = malloc(sizeof(*fhdr));
 				memcpy(fhdr,buf + sizeof(*ent),sizeof(*fhdr));
+				memcpy(dhdr,buf + sizeof(*ent) + sizeof(*fhdr),sizeof(*dhdr));
 				if(strcmp(fhdr->name,s[i]) == 0){
 					prevLba = ent->nxtLba;
-					_ata_read_master(ent,dhdr->nxtTreeLba,0);
+					_ata_read_master(buf,dhdr->nxtTreeLba,0);
 					break;
 				}
 			}
@@ -218,9 +219,10 @@ DIR *opendir(const char *name){
 		while(ent->alloc){
                         if(ent->type == __TYPE_DIR){
                                 memcpy(fhdr,buf + sizeof(*ent),sizeof(*fhdr));
+				memcpy(dhdr,buf + sizeof(*ent) + sizeof(*fhdr),sizeof(*dhdr));
                                 if(strcmp(fhdr->name,s[i]) == 0){
                                         prevlba = ent->nxtLba;
-                                        _ata_read_master(ent,dhdr->nxtTreeLba,0);
+                                        _ata_read_master(buf,dhdr->nxtTreeLba,0);
                                         break;
                                 }
                         }

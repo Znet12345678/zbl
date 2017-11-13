@@ -27,6 +27,9 @@ int recurse_write(char *in,char *name){
 			char *path = malloc(1024);
 			sprintf(path,"/%s/%s",in,ent->d_name);
 			int val = __mkdir(path,f);
+			if(!val){
+				printf("Failed to write dir %s\n",path);
+			}
 			fclose(f);
 			f = fopen(name,"r+b");
 			if(!f){
@@ -34,7 +37,6 @@ int recurse_write(char *in,char *name){
 				perror("[1]Couldn't open file");
 				return -1;
 			}
-			printf("%s %d\n",path,val);
 		}
 	}
 	fclose(f);
