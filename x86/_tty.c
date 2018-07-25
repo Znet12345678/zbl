@@ -33,8 +33,8 @@ uint8_t x = 0,y = 0;
 void t_init(){
 	x = 0;
 	y = 0;
-	//tcolour = mkcolour(COLOUR_LIGHT_GREY,COLOUR_BLUE);
 	tcolour = mkcolour(COLOUR_BLACK,COLOUR_LIGHT_GREY);
+	//tcolour = mkcolour(COLOUR_BLACK,COLOUR_LIGHT_GREY);
 	tbuff = vga;
 	for(int y = 0; y < 25;y++){
         	for(int x = 0;x < 80;x++){
@@ -92,13 +92,13 @@ void t_readvals(){
 	x = *(uint8_t*)0x00000510;
 	y = *(uint8_t*)0x00000511;
 //	tcolour = mkcolour(COLOUR_LIGHT_GREY,COLOUR_BLUE);
-	tcolour = mkcolour(COLOUR_BLACK,COLOUR_LIGHT_GREY);
+	tcolour = mkcolour(COLOUR_LIGHT_GREY,COLOUR_BLACK);
 }
 #else
 void t_readvals(){
 	x = 0;
 	y = 0;
 	//tcolour = mkcolour(COLOUR_LIGHT_GREY,COLOUR_BLUE);
-	tcolour = mkcolour(COLOUR_BLACK,COLOUR_LIGHT_GREY);
+	tcolour = mkcolour(COLOUR_LIGHT_GREY,COLOUR_BLACK);
 }
 #endif

@@ -7,11 +7,11 @@
 #include <genfs.h>
 char **sep(const char *str,int c){
         int i = 0,k = 0,l = 0;
-        char **ret = (char**)malloc(102400);
+        char **ret = (char**)calloc(1,102400);
         while(str[i] != 0){
                 while(str[i] == c)
                         i++;
-                ret[l] = malloc(1024);
+                ret[l] = calloc(1,1024);
                 while(str[i] != c && str[i] != 0){
                         ret[l][k] = str[i];
                         k++;
@@ -39,31 +39,31 @@ int f_read_master(FILE *in,uint8_t *buf,int lba){
 		buf[i] = getc(in);
 }
 struct __superblock *__parse_superblock(FILE *in){
-	uint8_t *buf = malloc(1024);
+	uint8_t *buf = calloc(1,1024);
 	f_read_master(in,buf,0);
-	struct __superblock *sblk = malloc(sizeof(*sblk));
+	struct __superblock *sblk = calloc(1,sizeof(*sblk));
 	memcpy(sblk,buf,sizeof(*sblk));
 	return sblk;
 }
 struct __ent *__parse_ent(int lba,int offset,FILE *in){
-	uint8_t *buf = malloc(1024);
+	uint8_t *buf = calloc(1,1024);
 	f_read_master(in,buf,lba);
-	struct __ent *ret = malloc(sizeof(*ret));
+	struct __ent *ret = calloc(1,sizeof(*ret));
 	memcpy(ret,buf + offset,sizeof(*ret));
 	free(buf);
 	return ret;
 }
 struct __data_ent *__parse_dent(int lba,int offset,FILE *in){
-	uint8_t *buf = malloc(1024);
+	uint8_t *buf = calloc(1,1024);
 	f_read_master(in,buf,lba);
-	struct __data_ent *ret = malloc(sizeof(*ret));
+	struct __data_ent *ret = calloc(1,sizeof(*ret));
 	memcpy(ret,buf + offset,sizeof(*ret));
 	free(buf);
 	return ret;
 }
 __DIR *__opendir(const char *path,FILE *in){
 	struct __superblock *sblk = __parse_superblock(in);
-	__DIR *ret = malloc(sizeof(*ret));
+	__DIR *ret = calloc(1,sizeof(*ret));
 	if(strcmp(path,"/") == 0){
 		struct __ent *ent = __parse_ent(sblk->root_dir_lba,sblk->root_dir_offset,in);
 		ret->ent = ent;
@@ -95,15 +95,15 @@ __DIR *__opendir(const char *path,FILE *in){
 	return ret;
 }
 struct __fdat *__parse_fdat(int lba,int offset,FILE *in){
-	uint8_t *buf = malloc(1024);
+	uint8_t *buf = calloc(1,1024);
 	f_read_master(in,buf,lba);
-	struct __fdat *fdat = malloc(sizeof(*fdat));
+	struct __fdat *fdat = calloc(1,sizeof(*fdat));
 	memcpy(fdat,buf + offset,sizeof(*fdat));
 	return fdat;
 }
 struct __data *__find_free_blk(FILE *in){
 	struct __superblock *sblk = __parse_superblock(in);
-	uint8_t *buf = malloc(1024);
+	uint8_t *buf = calloc(1,1024);
 	int offset = sblk->root_dir_offset,lba = sblk->root_dir_lba;
 	f_read_master(in,buf,lba);
 	while(buf[offset] == 1){
@@ -127,7 +127,7 @@ struct __data *__find_free_blk(FILE *in){
 		}
 		f_read_master(in,buf,lba);
 	}
-	struct __data *ret = malloc(sizeof(*ret));
+	struct __data *ret = calloc(1,sizeof(*ret));
 	ret->lba = lba;
 	ret->offset = offset;
 	//printf("%d %d\n",ret->lba,ret->offset);
@@ -143,7 +143,7 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 //	if(dir[strlen(dir) - 1] != '/')
 //		last++;
 	if(strcmp(dir,"/") == 0){
-		struct __ent *ent = malloc(sizeof(*ent));
+		struct __ent *ent = calloc(1,sizeof(*ent));
 		ent->alloc = 1;
 		ent->ent_type = 0;
 		ent->type =TYPE_DIR;
@@ -153,11 +153,11 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 		ent->nxt_ent_offset = 0;
 		ent->data_ent_lba = sblk->root_dir_lba;
 		ent->data_ent_offset = sblk->root_dir_offset + sizeof(*ent);
-		uint8_t *pntr = malloc(1024);
+		uint8_t *pntr = calloc(1,1024);
 		f_read_master(in,pntr,sblk->root_dir_lba);
 		memcpy(pntr + sblk->root_dir_offset,ent,sizeof(*ent));
 		f_write_master(out,pntr,sblk->root_dir_lba);
-		struct __data_ent *dent = malloc(sizeof(*dent));
+		struct __data_ent *dent = calloc(1,sizeof(*dent));
 		dent->alloc = 1;
 		dent->ent_type = 1;
 		dent->type = TYPE_DIR;
@@ -166,7 +166,7 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 		dent->data_lba = 0;
 		dent->data_offset = 0;
 		free(pntr);
-		pntr = malloc(1024);
+		pntr = calloc(1,1024);
 		f_read_master(in,pntr,ent->data_ent_lba);
 		memcpy(pntr + ent->data_ent_offset,dent,sizeof(*dent));
 		f_write_master(out,pntr,ent->data_ent_lba);
@@ -177,7 +177,7 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 		f_write_master(out,pntr,ent->data_ent_lba);
 		return 1;
 	}
-	char *prev = malloc(1024);
+	char *prev = calloc(1,1024);
 	strcpy(prev,"/");
 	int i = 0;
 	while(i < last - 1){
@@ -199,13 +199,13 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 	struct __data *dat = __find_free_blk(in);
 	ent->nxt_ent_lba = dat->lba;
 	ent->nxt_ent_offset = dat->offset;
-	uint8_t *wrt = malloc(1024);
+	uint8_t *wrt = calloc(1,1024);
 	f_read_master(in,wrt,prev_lba);
 	memcpy(wrt + prev_offset,ent,sizeof(*ent));
 	f_write_master(out,wrt,prev_lba);
 	//free(wrt);
-	//wrt = malloc(1024);
-	struct __ent *_ent = malloc(sizeof(*ent));
+	//wrt = calloc(1,1024);
+	struct __ent *_ent = calloc(1,sizeof(*ent));
 	_ent->alloc = 1;
 	_ent->ent_type = 0;
 	_ent->type = TYPE_DIR;
@@ -222,14 +222,14 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 	f_write_master(out,wrt,dat->lba);
 	struct __data *da = __find_free_blk(in);
 	//free(wrt);
-	//wrt = malloc(1024);
+	//wrt = calloc(1,1024);
 	_ent->data_ent_lba = da->lba;
 	_ent->data_ent_offset = da->offset;
 	memcpy(wrt + dat->offset,_ent,sizeof(*ent));
 	f_write_master(out,wrt,dat->lba);
 	//free(wrt);
-	//wrt = malloc(1024);
-	struct __data_ent *dent = malloc(sizeof(*dent));
+	//wrt = calloc(1,1024);
+	struct __data_ent *dent = calloc(1,sizeof(*dent));
 	dent->alloc = 1;
 	dent->ent_type = 1;
 	dent->type = TYPE_DIR;
@@ -241,13 +241,13 @@ int __mkdir(const char *dir,FILE *in,FILE *out){
 	memcpy(wrt + da->offset,dent,sizeof(*dent));
 	f_write_master(out,wrt,da->lba);
 	//free(wrt);
-	//wrt = malloc(1024);
+	//wrt = calloc(1,1024);
 	struct __data *d2 = __find_free_blk(in);
 	dent->data_lba = d2->lba;
 	dent->data_offset = d2->offset;
 	memcpy(wrt + da->offset,dent,sizeof(*dent));
 	f_write_master(out,wrt,da->lba);
-	struct __ent *__ent = malloc(sizeof(*ent));
+	struct __ent *__ent = calloc(1,sizeof(*ent));
 	__ent->alloc = 1;
 	__ent->ent_type = 0;
 	__ent->type = TYPE_DIR;
@@ -269,7 +269,7 @@ int main(int argc,char *argv[]){
 		usage(argv[0]);
 		return -1;
 	}
-	struct __superblock *sblk = malloc(sizeof(*sblk));
+	struct __superblock *sblk = calloc(1,sizeof(*sblk));
 	sblk->sig[0] = 0x7f;
 	sblk->sig[1] = 'G';
 	sblk->sig[2] = 'E';
@@ -281,13 +281,13 @@ int main(int argc,char *argv[]){
 		perror("Couldn't open file");
 		return -1;
 	}
-	uint8_t *buf = malloc(1024);
+	uint8_t *buf = calloc(1,1024);
 	for(int i = 0; i < 512;i++)
 		buf[i] = 0;
 	memcpy(buf,sblk,sizeof(*sblk));
 	f_write_master(out,buf,0);
 	__mkdir("/",out,out);
-	char *orig = malloc(1024);
+	char *orig = calloc(1,1024);
 	sprintf(orig,"/%s",argv[1]);
 	__mkdir(orig,out,out);
 	write_dirs(argv[1],out);
@@ -301,7 +301,7 @@ int write_file(const char *path,FILE *f,FILE *io){
 	int last = 0;
 	while(arr[last] != 0)
 		last++;
-	char *prev = malloc(1024);
+	char *prev = calloc(1,1024);
 	strcpy(prev,"/");
 	for(int i = 0; i < last - 1;i++){
 		strcat(prev,arr[i]);
@@ -319,13 +319,13 @@ int write_file(const char *path,FILE *f,FILE *io){
 	struct __data *dat = __find_free_blk(io);
 	ent->nxt_ent_lba = dat->lba;
 	ent->nxt_ent_offset = dat->offset;
-	uint8_t *pntr = malloc(1024);
+	uint8_t *pntr = calloc(1,1024);
 	f_read_master(io,pntr,prev_lba);
 	memcpy(pntr + prev_offset,ent,sizeof(*ent));
 	f_write_master(io,pntr,prev_lba);
 	free(ent);
 	//printf("%d %d %d %d\n",ent->nxt_ent_lba,ent->nxt_ent_offset,prev_lba,prev_offset);
-	ent = malloc(sizeof(*ent));
+	ent = calloc(1,sizeof(*ent));
 	ent->alloc = 1;
 	ent->ent_type = 0;
 	ent->type = TYPE_FILE;
@@ -350,17 +350,17 @@ int write_file(const char *path,FILE *f,FILE *io){
 	//printf("%d %d\n",ent->data_ent_lba,ent->data_ent_offset);
 	//printf("%d\n",pntr[dat->offset]);
 	f_write_master(io,pntr,dat->lba);
-	struct __fdat *fdat = malloc(sizeof(*fdat));
+	struct __fdat *fdat = calloc(1,sizeof(*fdat));
 	fseek(f,0,SEEK_END);
 	uint32_t bytes = ftell(f);
 	fseek(f,0,SEEK_SET);
 	int lba = _d->lba,offset = _d->offset;
-	//struct __fdat *fdat = malloc(sizeof(*fdat));
+	//struct __fdat *fdat = calloc(1,sizeof(*fdat));
 	fdat->alloc = 1;
 	fdat->ent_type = 4;
 	fdat->tlba = (bytes/512 + 1);
 	fdat->slba = _d->lba + 1;
-	uint8_t *b = malloc(1024);
+	uint8_t *b = calloc(1,1024);
 	f_read_master(io,b,_d->lba);
 	memcpy(b + _d->offset,fdat,sizeof(*fdat));
 	f_write_master(io,b,_d->lba);
@@ -391,7 +391,7 @@ int write_file(const char *path,FILE *f,FILE *io){
 		//printf("[%d %d]\n",fdat->nxt_fdat_lba,fdat->nxt_fdat_offset);
 		memcpy(pntr + offset,fdat,sizeof(*fdat));
 		f_write_master(io,pntr,lba);
-		uint8_t *buf = malloc(1024);
+		uint8_t *buf = calloc(1,1024);
 		for(int i = 0; i < 512;i++)
 			buf[i] = 0;
 		if(bytes > (512 - sizeof(*fdat) - offset))
@@ -407,7 +407,7 @@ int write_file(const char *path,FILE *f,FILE *io){
 		lba = fdat->nxt_fdat_lba;
 		offset = fdat->nxt_fdat_offset;
 		free(fdat);
-		fdat = malloc(sizeof(*fdat));
+		fdat = calloc(1,sizeof(*fdat));
 		free(buf);
 //		printf("%d\n",bytes);
 //		bytes-=(512 - sizeof(*fdat) - offset);
@@ -426,7 +426,7 @@ int write_dirs(const char *name,FILE *f){
 		if(ent->d_type == DT_DIR){
 			if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
 				continue;
-			char *rpath = malloc(1024);
+			char *rpath = calloc(1,1024);
 			sprintf(rpath,"/%s/%s",name,ent->d_name);
 			__mkdir(rpath,f,f);
 		}
@@ -436,9 +436,9 @@ int write_dirs(const char *name,FILE *f){
 	d = opendir(name);
 	while(ent = readdir(d)){
 		if(ent->d_type == DT_REG){
-			char *rpath = malloc(1024);
+			char *rpath = calloc(1,1024);
 			sprintf(rpath,"/%s/%s",name,ent->d_name);
-			char *path = malloc(1024);
+			char *path = calloc(1,1024);
 			sprintf(path,"%s/%s",name,ent->d_name);
 			FILE *nf = fopen(path,"rb");
 			if(!nf){
@@ -457,7 +457,7 @@ int write_dirs(const char *name,FILE *f){
 		if(ent->d_type == DT_DIR){
 			if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
 				continue;
-			char *path = malloc(1024);
+			char *path = calloc(1,1024);
 			sprintf(path,"%s/%s",name,ent->d_name);
 			write_dirs(path,f);
 		}

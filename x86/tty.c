@@ -33,8 +33,8 @@ int x = 0,y = 0;
 void t_init(){
 	x = 0;
 	y = 0;
-	//tcolour = mkcolour(COLOUR_WHITE,COLOUR_BLUE);
-	tcolour = mkcolour(COLOUR_BLACK,COLOUR_LIGHT_GREY);
+	tcolour = mkcolour(COLOUR_WHITE,COLOUR_BLACK);
+	//tcolour = mkcolour(COLOUR_BLACK,COLOUR_LIGHT_GREY);
 	tbuff = vga;
 	 for(int y = 0; y < 25;y++){
         	for(int x = 0;x < 80;x++){
